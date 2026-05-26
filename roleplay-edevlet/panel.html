@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1565c0">
+<title>Panelim - Amsterdam RP e-Devlet</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body data-page="dashboard">
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div>
+      <a href="kurumlar.html">Kurumlar</a>
+      <a href="#" onclick="Theme.toggle();return false;">Tema</a>
+      <a href="#">Yardım</a>
+    </div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">e-</div>
+      <div class="logo-text"><h1>Devlet Kapısı</h1><span>AMSTERDAM RP</span></div>
+    </a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:30px;">
+  <div class="dash-grid">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="avatar"><i class="fas fa-user"></i></div>
+        <div id="dash-name" style="font-weight:700;font-size:1.05rem;letter-spacing:-0.2px;">---</div>
+        <div id="dash-tc" style="font-size:0.78rem;opacity:0.85;margin-top:2px;">---</div>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="panel.html" class="active"><i class="fas fa-home"></i> Ana Panel</a></li>
+        <li><a href="profil.html"><i class="fas fa-id-card"></i> Profil Bilgilerim</a></li>
+        <li><a href="arac.html"><i class="fas fa-car"></i> Araçlarım</a></li>
+        <li><a href="trafik.html"><i class="fas fa-file-invoice-dollar"></i> Trafik Cezaları</a></li>
+        <li><a href="sicil.html"><i class="fas fa-gavel"></i> Adli Sicil</a></li>
+        <li><a href="randevu.html"><i class="fas fa-calendar-check"></i> Randevularım</a></li>
+        <li><a href="eimza.html"><i class="fas fa-file-signature"></i> e-İmza</a></li>
+        <li><a href="kurumlar.html"><i class="fas fa-building"></i> Kurumlar</a></li>
+        <li><a href="eadalet.html"><i class="fas fa-balance-scale"></i> e-Adalet</a></li>
+        <li><a href="bildirimler.html"><i class="fas fa-bell"></i> Bildirimler</a></li>
+        <li><a href="ayarlar.html"><i class="fas fa-cog"></i> Ayarlar</a></li>
+        <li><a href="#" onclick="Auth.logout();return false;"><i class="fas fa-sign-out-alt"></i> Güvenli Çıkış</a></li>
+      </ul>
+    </aside>
+
+    <div class="dash-main">
+      <div>
+        <h2 style="font-size:1.35rem;margin-bottom:4px;">Hoş Geldiniz</h2>
+        <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">Son işlemleriniz ve hızlı erişim bilgileriniz aşağıdadır.</p>
+      </div>
+
+      <div class="stat-cards">
+        <div class="stat-card" style="border-left-color:#ef4444;">
+          <h5>Ödenmemiş Cezalar</h5>
+          <div class="value" id="stat-fines">0</div>
+        </div>
+        <div class="stat-card" style="border-left-color:#f59e0b;">
+          <h5>Adli Sicil Kaydı</h5>
+          <div class="value" id="stat-records">0</div>
+        </div>
+        <div class="stat-card" style="border-left-color:#3b82f6;">
+          <h5>Kayıtlı Araç</h5>
+          <div class="value" id="stat-vehicles">0</div>
+        </div>
+        <div class="stat-card" style="border-left-color:#10b981;">
+          <h5>Bekleyen Borç</h5>
+          <div class="value" id="stat-balance">₺0,00</div>
+        </div>
+        <div class="stat-card" style="border-left-color:#7c3aed;">
+          <h5>Aktif Randevu</h5>
+          <div class="value" id="stat-appts">0</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><i class="fas fa-clock-rotate-left" style="color:var(--primary-blue);"></i><h3>Son İşlemler</h3></div>
+        <div id="recent-list"><div class="empty-state"><div class="icon">📭</div><p>Yükleniyor...</p></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><i class="fas fa-bolt" style="color:var(--accent-orange);"></i><h3>Hızlı İşlemler</h3></div>
+        <div id="dash-quick" style="display:grid;grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:10px;">
+          <a href="trafik.html" class="btn btn-outline" style="justify-content:center;"><i class="fas fa-file-invoice-dollar"></i> Cezalarım</a>
+          <a href="arac.html" class="btn btn-outline" style="justify-content:center;"><i class="fas fa-car"></i> Araçlarım</a>
+          <a href="sicil.html" class="btn btn-outline" style="justify-content:center;"><i class="fas fa-gavel"></i> Sicil</a>
+          <a href="randevu.html" class="btn btn-outline" style="justify-content:center;"><i class="fas fa-calendar-plus"></i> Randevu Al</a>
+          <a href="eimza.html" class="btn btn-outline" style="justify-content:center;"><i class="fas fa-file-signature"></i> e-İmza</a>
+          <a href="profil.html" class="btn btn-outline" style="justify-content:center;"><i class="fas fa-user-edit"></i> Profilim</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;">
+    <div style="font-size:0.78rem;color:var(--text-muted);">© 2026, Amsterdam RP - Tüm Hakları Saklıdır. | <a href="#">Gizlilik ve Güvenlik</a> | <a href="#">Hızlı Çözüm Merkezi</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/services.js"></script>
+<script src="js/police.js"></script>
+<script src="js/documents.js"></script>
+<script src="js/justice.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+  initDashboardPage();
+  injectSidebar('panel');
+});
+</script>
+</body>
+</html>

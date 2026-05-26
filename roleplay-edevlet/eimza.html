@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>e-İmza - Amsterdam RP e-Devlet</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body data-page="esignature">
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div><a href="index.html">Ana Sayfa</a><a href="#" onclick="Theme.toggle();return false;">Tema</a></div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo"><div class="logo-icon">e-</div><div class="logo-text"><h1>Devlet Kapısı</h1><span>AMSTERDAM RP</span></div></a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:30px;max-width:1100px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--light-blue);color:var(--primary-blue);display:grid;place-items:center;font-size:1.3rem;"><i class="fas fa-file-signature"></i></div>
+    <div>
+      <h2 style="font-size:1.3rem;">e-İmza Uygulama Merkezi</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);">Şablonlu belge oluşturma • USB sertifika doğrulama • Çift imza desteği</p>
+    </div>
+  </div>
+
+  <!-- İmza Bekleyenler (ikinci taraf için) -->
+  <div id="pending-signatures-section"></div>
+
+  <!-- Avukat Müvekkil Paneli -->
+  <div id="lawyer-clients-section"></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:20px;align-items:start;">
+    <!-- Sol: Başvuru + Belge Oluştur -->
+    <div>
+      <div id="esign-apply-section" style="margin-bottom:16px;"></div>
+
+      <!-- Şablondan Belge Oluştur -->
+      <div class="card" style="border-left:4px solid #7c3aed;">
+        <h3 style="font-size:1.05rem;margin-bottom:12px;"><i class="fas fa-pen-nib" style="color:#7c3aed;margin-right:8px;"></i>Belge Oluştur</h3>
+        <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:14px;">Hazır şablonlardan belge oluşturun veya serbest belge ekleyin.</p>
+        <button onclick="showTemplateSelector()" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:10px;">
+          <i class="fas fa-file-circle-plus"></i> Şablondan Belge Oluştur
+        </button>
+        <div style="display:flex;align-items:center;gap:8px;margin:10px 0;"><div style="flex:1;height:1px;background:var(--border);"></div><span style="font-size:0.78rem;color:var(--text-muted);">veya serbest</span><div style="flex:1;height:1px;background:var(--border);"></div></div>
+        <form id="esign-form">
+          <div class="form-group"><label>Belge Başlığı</label><input type="text" id="esign-title" required placeholder="örn: Araç Devir Dilekçesi"></div>
+          <div class="form-group"><label>Belge Türü</label><select id="esign-type"><option>Dilekçe</option><option>Sözleşme</option><option>Vekaletname</option><option>İtiraz</option><option>Beyanname</option></select></div>
+          <button type="submit" class="btn btn-outline" style="width:100%;justify-content:center;"><i class="fas fa-plus-circle"></i> Serbest Belge Oluştur</button>
+        </form>
+      </div>
+
+      <!-- Avukat Yetki Belgesi Kısayol -->
+      <div class="card" style="border-left:4px solid #ea580c;margin-top:16px;">
+        <h3 style="font-size:1rem;margin-bottom:8px;"><i class="fas fa-briefcase" style="color:#ea580c;margin-right:6px;"></i>Avukat Yetki Belgesi</h3>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:12px;">Avukatınıza yetki verin — dosyalarınıza erişim sağlasın ve davanızda sizi temsil etsin.</p>
+        <button onclick="showTemplateForm('avukat_yetki')" class="btn btn-outline" style="width:100%;justify-content:center;border-color:#ea580c;color:#ea580c;">
+          <i class="fas fa-user-shield"></i> Avukat Yetki Belgesi Oluştur
+        </button>
+      </div>
+    </div>
+
+    <!-- Sağ: Belgelerim -->
+    <div>
+      <div class="card" style="border-left:4px solid #059669;">
+        <h3 style="font-size:1.05rem;margin-bottom:14px;"><i class="fas fa-folder-open" style="color:#059669;margin-right:8px;"></i>Belgelerim</h3>
+        <div id="esign-list"></div>
+      </div>
+
+      <!-- Mesajlaşma kısayolu (avukat/yargıç/savcı) -->
+      <div id="esign-messaging-shortcut" style="margin-top:14px;"></div>
+
+      <div class="card" style="margin-top:14px;border-left:4px solid var(--primary-blue);">
+        <h3 style="font-size:1.05rem;margin-bottom:10px;"><i class="fas fa-info-circle" style="color:var(--primary-blue);margin-right:8px;"></i>Nasıl Çalışır?</h3>
+        <div style="font-size:0.88rem;color:var(--text-muted);line-height:1.6;">
+          <ol style="padding-left:16px;">
+            <li style="margin-bottom:6px;"><strong>Şablon Seç:</strong> Dilekçe, sözleşme, vekaletname veya avukat yetki belgesi.</li>
+            <li style="margin-bottom:6px;"><strong>Detayları Doldur:</strong> Şablona özel alanları tamamlayın.</li>
+            <li style="margin-bottom:6px;"><strong>e-İmza:</strong> USB cihazınız ile imzalayın.</li>
+            <li style="margin-bottom:6px;"><strong>Çift İmza:</strong> Sözleşme ve vekaletnamelerde karşı taraf da imzalar.</li>
+            <li><strong>Avukat Yetki:</strong> Avukata yetki verince dosyalarınıza erişebilir ve dava mesajı gönderebilir.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;">
+    <div style="font-size:0.78rem;color:var(--text-muted);">© 2026, Amsterdam RP</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/services.js"></script>
+<script src="js/documents.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+  initESignPage();
+  // Render pending signatures for second-party
+  renderPendingSignatures(document.getElementById('pending-signatures-section'));
+  // Render lawyer clients panel
+  renderLawyerClientsPanel(document.getElementById('lawyer-clients-section'));
+  // Messaging shortcut for justice roles
+  const msgEl = document.getElementById('esign-messaging-shortcut');
+  if (msgEl && (Auth.isLawyer() || Auth.isJudge() || Auth.isProsecutor())) {
+    msgEl.innerHTML = `<div class="card" style="border-left:4px solid #1565c0;">
+      <h3 style="font-size:1rem;margin-bottom:8px;"><i class="fas fa-envelope" style="color:#1565c0;margin-right:6px;"></i>Dava Mesajları</h3>
+      <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:10px;">Yargıç, savcı veya avukatlarla dava hakkında mesajlaşın.</p>
+      <button onclick="openCaseMessaging()" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;"><i class="fas fa-comments"></i> Mesajları Aç</button>
+    </div>`;
+  }
+});
+</script>
+</body>
+</html>

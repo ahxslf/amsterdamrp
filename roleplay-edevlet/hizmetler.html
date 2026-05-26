@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1565c0">
+<title>Tüm Hizmetler - Amsterdam RP e-Devlet</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div>
+      <a href="index.html">Ana Sayfa</a>
+      <a href="#" onclick="Theme.toggle();return false;">Tema</a>
+      <a href="#">Yardım</a>
+    </div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">e-</div>
+      <div class="logo-text"><h1>Devlet Kapısı</h1><span>AMSTERDAM RP</span></div>
+    </a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:30px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--light-blue);color:var(--primary-blue);display:grid;place-items:center;font-size:1.3rem;">
+      <i class="fas fa-th-list"></i>
+    </div>
+    <div>
+      <h2 style="font-size:1.3rem;">Tüm e-Hizmetler Kataloğu</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);">Amsterdam RP e-Devlet Kapısı üzerinden sunulan tüm dijital hizmetler.</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px;">
+    <a href="trafik.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-file-invoice-dollar"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">Trafik Cezası Sorgula & Öde</h4>
+        <p style="margin-top:4px;">Plaka veya TC ile ceza sorgulama, anında ödeme ve makbuz alma.</p>
+      </div>
+    </a>
+    <a href="arac.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-car-side"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">Araç / Plaka Sorgulama</h4>
+        <p style="margin-top:4px;">Ruhsat, muayene, sigorta, vergi ve aranma durumu kontrolü.</p>
+      </div>
+    </a>
+    <a href="sicil.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-gavel"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">Adli Sicil / UYAP-RP</h4>
+        <p style="margin-top:4px;">Ceza ve hukuk davaları, mahkeme kararları, infaz bilgisi.</p>
+      </div>
+    </a>
+    <a href="randevu.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-calendar-check"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">e-Randevu Merkezi</h4>
+        <p style="margin-top:4px;">Adliye, DMV, Vergi, Emniyet için online randevu alma.</p>
+      </div>
+    </a>
+    <a href="eimza.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-file-signature"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">e-İmza Uygulama Merkezi</h4>
+        <p style="margin-top:4px;">Dilekçe, sözleşme, vekaletname oluşturma ve dijital imza.</p>
+      </div>
+    </a>
+    <a href="profil.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-id-card"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">Vatandaş Bilgi Kartı</h4>
+        <p style="margin-top:4px;">Kimlik, adres, meslek, kan grubu ve kayıtlı varlık özetiniz.</p>
+      </div>
+    </a>
+    <a href="kurumlar.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-building"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">Kurumlar ve Belediyeler</h4>
+        <p style="margin-top:4px;">Emniyet, Adliye, Sağlık, DMV gibi kurumların rehberi.</p>
+      </div>
+    </a>
+    <a href="eadalet.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;"><div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-balance-scale"></i></div><div><h4 style="font-size:1rem;">e-Adalet Portalı</h4><p style="margin-top:4px;">Dava takibi, mahkeme kararları, savcılık ve avukatlık.</p></div></a>
+    <a href="bildirimler.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;"><div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-bell"></i></div><div><h4 style="font-size:1rem;">Bildirimler</h4><p style="margin-top:4px;">Tüm bildirim ve uyarılarınıza ulaşın.</p></div></a>
+    <a href="polis.html" class="qs-card" style="text-align:left;align-items:flex-start;flex-direction:row;gap:14px;">
+      <div class="qs-icon" style="margin:0;width:48px;height:48px;font-size:1.2rem;flex-shrink:0;"><i class="fas fa-shield-alt"></i></div>
+      <div>
+        <h4 style="font-size:1rem;">Polis Paneli (Politie Enforcer)</h4>
+        <p style="margin-top:4px;">Yetkili personel için ceza yazma, olay raporu ve BOLO yönetimi.</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;">
+    <div style="font-size:0.78rem;color:var(--text-muted);">© 2026, Amsterdam RP - Tüm Hakları Saklıdır. | <a href="#">Gizlilik ve Güvenlik</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/services.js"></script>
+<script src="js/police.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+});
+</script>
+</body>
+</html>

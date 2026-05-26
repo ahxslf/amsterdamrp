@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7c3aed">
+<title>e-Randevu - Amsterdam RP e-Devlet</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body data-page="appointment">
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div>
+      <a href="index.html">Ana Sayfa</a>
+      <a href="#" onclick="Theme.toggle();return false;">Tema</a>
+      <a href="#">Yardım</a>
+    </div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">e-</div>
+      <div class="logo-text"><h1>Devlet Kapısı</h1><span>AMSTERDAM RP</span></div>
+    </a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:30px;max-width:1100px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--light-blue);color:var(--primary-blue);display:grid;place-items:center;font-size:1.3rem;">
+      <i class="fas fa-calendar-check"></i>
+    </div>
+    <div>
+      <h2 style="font-size:1.3rem;">e-Randevu Merkezi</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);">Resmî kurumlara sıra beklemeden randevu alın.</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns: 1fr 1.4fr; gap:20px;align-items:start;">
+    <!-- Form -->
+    <div class="card" style="border-left:4px solid #7c3aed;">
+      <h3 style="font-size:1.05rem;margin-bottom:16px;"><i class="fas fa-calendar-plus" style="color:#7c3aed;margin-right:8px;"></i>Yeni Randevu Al</h3>
+      <form id="appt-form">
+        <div class="form-group">
+          <label>Kurum</label>
+          <select id="appt-inst" required>
+            <option value="" disabled selected>Kurum seçiniz</option>
+            <option>Amsterdam RP DMV</option>
+            <option>Amsterdam Vergi Dairesi</option>
+            <option>Amsterdam Adliyesi</option>
+            <option>Amsterdam Emniyet Müdürlüğü</option>
+            <option>Amsterdam RP Sağlık Bakanlığı</option>
+            <option>Utrecht Adliyesi</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Hizmet / Sebep</label>
+          <input type="text" id="appt-service" required placeholder="örn: Sürücü Belgesi Yenileme">
+        </div>
+        <div class="form-group">
+          <label>Lokasyon (Şube)</label>
+          <input type="text" id="appt-loc" placeholder="örn: Downtown Amsterdam">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="form-group" style="margin:0;">
+            <label>Tarih</label>
+            <input type="date" id="appt-date" required>
+          </div>
+          <div class="form-group" style="margin:0;">
+            <label>Saat</label>
+            <input type="time" id="appt-time" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:10px;justify-content:center;"><i class="fas fa-check-circle"></i> Randevu Oluştur</button>
+      </form>
+    </div>
+
+    <!-- Lists -->
+    <div>
+      <div class="card" style="border-left:4px solid #3b82f6;">
+        <h3 style="font-size:1.05rem;margin-bottom:14px;"><i class="fas fa-list-ul" style="color:#3b82f6;margin-right:8px;"></i>Aktif Randevularım</h3>
+        <div id="appt-list"></div>
+      </div>
+      <div class="card" style="border-left:4px solid var(--text-muted);margin-top:14px;">
+        <h3 style="font-size:1.05rem;margin-bottom:14px;"><i class="fas fa-history" style="color:var(--text-muted);margin-right:8px;"></i>Geçmiş / İptal Edilen</h3>
+        <div id="appt-history"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;">
+    <div style="font-size:0.78rem;color:var(--text-muted);">© 2026, Amsterdam RP - Tüm Hakları Saklıdır.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/services.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+  initAppointmentPage();
+});
+</script>
+</body>
+</html>

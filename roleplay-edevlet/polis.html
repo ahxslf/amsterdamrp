@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d47a1">
+<title>Polis Paneli - Amsterdam RP e-Devlet</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body data-page="police">
+
+<div class="top-bar" style="background:linear-gradient(90deg, #0d47a1, #1565c0);">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-shield-alt" style="margin-right:6px;"></i> Politie Enforcer - e-Devlet RP</div>
+    <div>
+      <a href="index.html">Vatandaş Portalı</a>
+      <a href="#" onclick="Theme.toggle();return false;">Tema</a>
+    </div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="polis.html" class="logo">
+      <div class="logo-icon" style="background:#0d47a1;"><i class="fas fa-shield-alt"></i></div>
+      <div class="logo-text"><h1>Polis Paneli</h1><span>POLITIE AMSTERDAM</span></div>
+    </a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:30px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--light-blue);color:var(--primary-blue);display:grid;place-items:center;font-size:1.3rem;">
+      <i class="fas fa-shield-alt"></i>
+    </div>
+    <div>
+      <h2 style="font-size:1.3rem;">Kolluk Kuvvetleri Hizmet Paneli</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);">Yetkilendirilmiş memur erişimi. Ceza yazma, olay raporu ve araç takibi.</p>
+    </div>
+  </div>
+
+  <div id="police-access-check"></div>
+
+  <div id="police-content" style="display:none;">
+    <div id="police-overview" style="margin-bottom:24px;"></div>
+    <div style="display:grid;grid-template-columns: 1fr 1fr; gap:20px;align-items:start;">
+      <div id="police-citation"></div>
+      <div id="police-search"></div>
+    </div>
+    <div id="police-reports" style="margin-top:20px;"></div>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;">
+    <div style="font-size:0.78rem;color:var(--text-muted);">© 2026, Amsterdam RP Police Department - Tüm Hakları Saklıdır. | <a href="#">Personel Rehberi</a></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/services.js"></script>
+<script src="js/police.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+  const user = Auth.getUser();
+  if (!Auth.isPolice() && !Auth.isAdmin()) {
+    document.getElementById('police-access-check').innerHTML = `
+      <div class="card" style="text-align:center;padding:50px 20px;border-left:4px solid #ef4444;">
+        <div style="font-size:3.5rem;margin-bottom:16px;">🚫</div>
+        <h2 style="margin-bottom:8px;">Yetkisiz Erişim</h2>
+        <p style="color:var(--text-muted);max-width:500px;margin:0 auto;">Bu sayfa yalnızca yetkili kolluk kuvvetleri personeli (Politie, Sheriff, State Trooper) tarafından kullanılabilir. Giriş yaptığınız hesabın mesleği yetersiz görünüyor.</p>
+        <a href="index.html" class="btn btn-primary" style="margin-top:20px;">Ana Sayfaya Dön</a>
+      </div>
+    `;
+  } else {
+    document.getElementById('police-content').style.display = 'block';
+    initPolicePage();
+  }
+});
+</script>
+</body>
+</html>

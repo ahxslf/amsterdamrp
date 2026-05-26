@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1565c0">
+<title>Araç Sorgulama - Amsterdam RP e-Devlet</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body data-page="vehicle">
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div>
+      <a href="index.html">Ana Sayfa</a>
+      <a href="#" onclick="Theme.toggle();return false;">Tema</a>
+      <a href="#">Yardım</a>
+    </div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">e-</div>
+      <div class="logo-text"><h1>Devlet Kapısı</h1><span>AMSTERDAM RP</span></div>
+    </a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:30px;max-width:1100px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--light-blue);color:var(--primary-blue);display:grid;place-items:center;font-size:1.3rem;">
+      <i class="fas fa-car-side"></i>
+    </div>
+    <div>
+      <h2 style="font-size:1.3rem;">Araç Sorgulama ve Takip</h2>
+      <p style="font-size:0.82rem;color:var(--text-muted);">Amsterdam RP DMV • Plaka ve ruhsat bilgileri üzerinden sorgulama.</p>
+    </div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg, rgba(21,101,192,0.04), rgba(21,101,192,0.01));">
+    <form id="vehicle-form" style="display:grid;grid-template-columns: 1fr auto; gap:12px;align-items:end;">
+      <div class="form-group" style="margin:0;">
+        <label><i class="fas fa-hashtag" style="color:var(--text-muted);margin-right:4px;"></i> Plaka</label>
+        <input type="text" id="vehicle-plate" placeholder="örn: 34 RP 2024" style="text-transform:uppercase;">
+      </div>
+      <button type="submit" class="btn btn-primary" style="height:46px;min-width:140px;justify-content:center;"><i class="fas fa-search"></i> Sorgula</button>
+    </form>
+    <div class="input-hint" style="margin-top:12px;">Plaka girmeden sorgulama yaparsanız sistemdeki son kayıtlar listelenir. <strong>Aranan araçlar kırmızı</strong> ile işaretlenmiştir.</div>
+  </div>
+
+  <div id="vehicle-results" style="margin-top:20px;"></div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;">
+    <div style="font-size:0.78rem;color:var(--text-muted);">© 2026, Amsterdam RP - Tüm Hakları Saklıdır.</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/services.js"></script>
+<script src="js/police.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+  initVehiclePage();
+});
+</script>
+</body>
+</html>

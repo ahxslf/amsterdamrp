@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doğrulanıyor... - Amsterdam RP</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div style="display:grid;place-items:center;min-height:100vh;background:var(--bg-body);">
+  <div style="text-align:center;padding:40px;max-width:500px;">
+    <div style="width:80px;height:80px;border-radius:50%;background:#5865F2;color:#fff;display:grid;place-items:center;font-size:2rem;margin:0 auto 20px;">
+      <i class="fab fa-discord"></i>
+    </div>
+    <h2 id="cb-title">Discord Hesabı Doğrulanıyor...</h2>
+    <p id="cb-text" style="color:var(--text-muted);margin:12px 0 20px;">Lütfen bekleyiniz.</p>
+    <div id="cb-loader" style="width:48px;height:48px;border:4px solid var(--border);border-top-color:#5865F2;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div>
+    <div id="cb-error" style="display:none;margin-top:20px;">
+      <a href="giris.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Giriş Sayfasına Dön</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  const accessToken = params.get('access_token');
+
+  if (!accessToken) {
+    document.getElementById('cb-title').textContent = 'Hata!';
+    document.getElementById('cb-text').textContent = 'Erişim jetonu bulunamadı.';
+    document.getElementById('cb-loader').style.display = 'none';
+    document.getElementById('cb-error').style.display = 'block';
+    return;
+  }
+
+  Auth.handleCallback(accessToken);
+});
+</script>
+</body>
+</html>

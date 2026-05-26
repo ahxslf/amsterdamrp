@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c41230">
+<title>Ana Sayfa - Amsterdam RP e-Devlet Kapısı</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div>
+      <a href="kurumlar.html">Kurumlar</a>
+      <a href="eadalet.html">e-Adalet</a>
+      <a href="#" onclick="Theme.toggle();return false;"><i class="fas fa-moon"></i> Tema</a>
+      <a href="#">Yardım</a>
+    </div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">e-</div>
+      <div class="logo-text">
+        <h1>Devlet Kapısı</h1>
+        <span>AMSTERDAM RP • KİMLİK DOĞRULAMA SİSTEMİ</span>
+      </div>
+    </a>
+    <div class="header-actions" id="header-auth">
+      <a href="giris.html" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Giriş Yap</a>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <h2>Merhaba, size nasıl yardım edebilirim?</h2>
+    <form class="search-bar" onsubmit="handleHomeSearch(event)">
+      <input type="text" id="home-search" placeholder="Plaka, T.C. Kimlik No, kurum adı veya hizmet adı ile arayın..." autocomplete="off">
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+    <p class="hero-sub">Amsterdam RP e-Devlet Kapısı ile bilgi ve belgelerinize tek noktadan ulaşabilirsiniz.</p>
+  </div>
+</section>
+
+<div class="quick-services">
+  <a href="trafik.html" class="qs-card">
+    <div class="qs-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+    <h4>e-Hizmetler</h4>
+    <p>Sorgulama, başvuru ve ödeme.</p>
+  </a>
+  <a href="kurumlar.html" class="qs-card">
+    <div class="qs-icon"><i class="fas fa-building"></i></div>
+    <h4>Kurumlar</h4>
+    <p>Resmî kurumların hizmetleri.</p>
+  </a>
+  <a href="eadalet.html" class="qs-card">
+    <div class="qs-icon"><i class="fas fa-balance-scale"></i></div>
+    <h4>e-Adalet</h4>
+    <p>Dava takibi ve adli işlemler.</p>
+  </a>
+  <a href="hizmetler.html" class="qs-card">
+    <div class="qs-icon"><i class="fas fa-star"></i></div>
+    <h4>Yeni Hizmetler</h4>
+    <p>En yeni hizmetlere ulaşın.</p>
+  </a>
+  <a href="randevu.html" class="qs-card">
+    <div class="qs-icon"><i class="fas fa-calendar-check"></i></div>
+    <h4>e-Randevu</h4>
+    <p>Online randevu alın.</p>
+  </a>
+  <a href="eimza.html" class="qs-card">
+    <div class="qs-icon"><i class="fas fa-file-signature"></i></div>
+    <h4>e-İmza</h4>
+    <p>Dijital belge imzalama.</p>
+  </a>
+  <a href="bildirimler.html" class="qs-card">
+    <div class="qs-icon"><i class="fas fa-bell"></i></div>
+    <h4>Bildirimler</h4>
+    <p>Tüm bildirimlerinizi görün.</p>
+  </a>
+  <a href="#" class="qs-card" onclick="toast('Hızlı Çözüm Merkezi yakında aktif olacaktır.','info');return false;">
+    <div class="qs-icon"><i class="fas fa-comments"></i></div>
+    <h4>Hızlı Çözüm</h4>
+    <p>Şikayet ve önerileriniz.</p>
+  </a>
+</div>
+
+<div class="container">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;">
+    <div class="card" style="border-left:4px solid var(--primary-red);">
+      <div class="card-header"><i class="fas fa-shield-alt" style="color:var(--primary-red);font-size:1.2rem;"></i><h3>Amsterdam Politie</h3></div>
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px;">Asayiş, trafik ve güvenlik hizmetleri. Ekip kayıtları ve olay raporları.</p>
+      <a href="polis.html" class="btn btn-outline btn-sm"><i class="fas fa-shield-alt"></i> Polis Paneli</a>
+    </div>
+    <div class="card" style="border-left:4px solid var(--primary-blue);">
+      <div class="card-header"><i class="fas fa-car-side" style="color:var(--primary-blue);font-size:1.2rem;"></i><h3>Araçlarım</h3></div>
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px;">Sigorta, ceza, muayene ve araç bilgileriniz.</p>
+      <a href="arac.html" class="btn btn-outline btn-sm"><i class="fas fa-search"></i> Sorgula</a>
+    </div>
+    <div class="card" style="border-left:4px solid var(--accent-orange);">
+      <div class="card-header"><i class="fas fa-gavel" style="color:var(--accent-orange);font-size:1.2rem;"></i><h3>e-Adalet / Sicil</h3></div>
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px;">Adli sicil, dava takibi ve mahkeme kararları.</p>
+      <div style="display:flex;gap:8px;"><a href="sicil.html" class="btn btn-outline btn-sm"><i class="fas fa-search"></i> Sicil</a><a href="eadalet.html" class="btn btn-outline btn-sm"><i class="fas fa-balance-scale"></i> e-Adalet</a></div>
+    </div>
+    <div class="card" style="border-left:4px solid #7c3aed;">
+      <div class="card-header"><i class="fas fa-file-signature" style="color:#7c3aed;font-size:1.2rem;"></i><h3>e-İmza Hizmetleri</h3></div>
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px;">Dijital imza ile belge onaylama. USB sertifika doğrulaması.</p>
+      <a href="eimza.html" class="btn btn-outline btn-sm"><i class="fas fa-pen-nib"></i> e-İmza</a>
+    </div>
+    <div class="card" style="border-left:4px solid #db2777;">
+      <div class="card-header"><i class="fas fa-calendar-day" style="color:#db2777;font-size:1.2rem;"></i><h3>e-Randevu</h3></div>
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px;">Kurumlara online randevu alın.</p>
+      <a href="randevu.html" class="btn btn-outline btn-sm"><i class="fas fa-calendar-plus"></i> Randevu Al</a>
+    </div>
+    <div class="card" style="border-left:4px solid #059669;">
+      <div class="card-header"><i class="fas fa-building-columns" style="color:#059669;font-size:1.2rem;"></i><h3>Şirket Hizmetleri</h3></div>
+      <p style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px;">Fatura, personel ve vergi hizmetleri.</p>
+      <button class="btn btn-outline btn-sm" onclick="toast('Şirket yetkilisi girişi gerekli.','warning')"><i class="fas fa-lock"></i> Giriş Yap</button>
+    </div>
+  </div>
+</div>
+
+<div class="container" style="margin-top:10px;">
+  <h3 class="section-title">📢 Güncel Duyurular</h3>
+  <div class="card" style="margin-top:16px;">
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;font-size:0.9rem;">
+      <li style="display:flex;gap:10px;align-items:center;"><span class="status-badge status-acik">YENİ</span><span>e-İmza başvuruları artık DigiSign üzerinden yapılmaktadır. BTK onaylı sertifika ile belgelerinizi güvenle imzalayın.</span></li>
+      <li style="display:flex;gap:10px;align-items:center;"><span class="status-badge status-odenmedi">ÖNEMLİ</span><span>e-Adalet sistemi açıldı! Dava takibi ve mahkeme işlemlerini online yapabilirsiniz.</span></li>
+      <li style="display:flex;gap:10px;align-items:center;"><span class="status-badge status-guvluk">GÜVENLİK</span><span>Discord hesabınız ile giriş yaparak tüm hizmetlere erişebilirsiniz.</span></li>
+      <li style="display:flex;gap:10px;align-items:center;"><span class="status-badge status-odendi">BİLGİ</span><span>Bildirimler sistemi aktif! Tüm işlemlerinizi bildirimler üzerinden takip edin.</span></li>
+    </ul>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-inner">
+    <div class="footer-block">
+      <h4>Hızlı Erişim</h4>
+      <ul><li><a href="index.html">Ana Sayfa</a></li><li><a href="giris.html">Giriş Yap</a></li><li><a href="trafik.html">Trafik Cezası</a></li><li><a href="arac.html">Araç Sorgula</a></li><li><a href="sicil.html">Adli Sicil</a></li><li><a href="randevu.html">e-Randevu</a></li></ul>
+    </div>
+    <div class="footer-block">
+      <h4>Kurumlar</h4>
+      <ul><li><a href="kurumlar.html">Amsterdam Politie</a></li><li><a href="kurumlar.html">Hollanda RDW</a></li><li><a href="kurumlar.html">Vergi Dairesi</a></li><li><a href="eadalet.html">Amsterdam Adliyesi</a></li></ul>
+    </div>
+    <div class="footer-block">
+      <h4>Yardım</h4>
+      <ul><li><a href="#">SSS</a></li><li><a href="#">Güvenlik İpuçları</a></li><li><a href="ayarlar.html">Hesap Ayarları</a></li></ul>
+    </div>
+    <div class="footer-block">
+      <h4>İletişim</h4>
+      <ul><li><a href="#">Çözüm Merkezi (112)</a></li><li><a href="#">Siber Güvenlik İhbar</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div style="display:flex;align-items:center;gap:10px;"><div style="font-size:1.2rem;">🏛️</div><div><strong>Amsterdam RP</strong><br><span style="font-size:0.7rem;">e-Devlet ve e-Adalet Altyapı Hizmetleri</span></div></div>
+    <div style="text-align:right;"><div>© 2026, Amsterdam RP - Tüm Hakları Saklıdır.</div><div style="margin-top:4px;"><a href="#" style="margin-right:12px;">Gizlilik</a><a href="#">Çözüm Merkezi</a></div></div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/services.js"></script>
+<script src="js/police.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+});
+</script>
+</body>
+</html>

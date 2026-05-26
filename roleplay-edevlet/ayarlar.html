@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ayarlar - Amsterdam RP e-Devlet</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body data-page="settings">
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div><a href="index.html">Ana Sayfa</a><a href="#" onclick="Theme.toggle();return false;">Tema</a></div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo"><div class="logo-icon">e-</div><div class="logo-text"><h1>Devlet Kapısı</h1><span>AMSTERDAM RP</span></div></a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:30px;max-width:900px;">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+    <div style="width:48px;height:48px;border-radius:12px;background:var(--light-blue);color:var(--primary-blue);display:grid;place-items:center;font-size:1.3rem;"><i class="fas fa-cog"></i></div>
+    <div><h2 style="font-size:1.3rem;">Hesap ve Görünüm Ayarları</h2><p style="font-size:0.82rem;color:var(--text-muted);">Kişiselleştirme, güvenlik ve sistem tercihleri.</p></div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    <div class="card" style="border-left:4px solid var(--primary-blue);">
+      <div class="card-header"><i class="fas fa-paint-brush" style="color:var(--primary-blue);"></i><h3>Görünüm</h3></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div><div style="font-weight:600;">Koyu Tema</div><div style="font-size:0.82rem;color:var(--text-muted);">Gece modu ile göz yorgunluğunu azaltın.</div></div>
+        <button class="btn btn-outline" onclick="Theme.toggle();location.reload();"><i class="fas fa-moon"></i> Temayı Değiştir</button>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid #059669;">
+      <div class="card-header"><i class="fas fa-shield-alt" style="color:#059669;"></i><h3>Güvenlik</h3></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-outline btn-sm" onclick="toast('Şifre değiştirme gelecekte aktif olacaktır.','info')"><i class="fas fa-key"></i> Şifre Değiştir</button>
+        <button class="btn btn-outline btn-sm" onclick="toast('Discord bağlantısı: config.js üzerinden aktif edilmesi gerekir.','info')"><i class="fab fa-discord"></i> Discord Hesabını Bağla</button>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:4px solid var(--accent-orange);">
+      <div class="card-header"><i class="fas fa-database" style="color:var(--accent-orange);"></i><h3>Veri ve Gizlilik</h3></div>
+      <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:14px;">Simülasyon verilerini sıfırlayabilirsiniz.</div>
+      <button class="btn btn-red btn-sm" onclick="if(confirm('Tüm veriler sıfırlanacak!')){localStorage.clear();location.reload();}"><i class="fas fa-trash-alt"></i> Verileri Sıfırla</button>
+    </div>
+
+    <div class="card" style="border-left:4px solid #7c3aed;">
+      <div class="card-header"><i class="fas fa-info-circle" style="color:#7c3aed;"></i><h3>Sistem Hakkında</h3></div>
+      <div id="settings-sysinfo"></div>
+    </div>
+  </div>
+</div>
+
+<footer class="main-footer">
+  <div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;">
+    <div style="font-size:0.78rem;color:var(--text-muted);">© 2026, Amsterdam RP</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  updateHeaderAuth();
+  // Render system info dynamically
+  const el = document.getElementById('settings-sysinfo');
+  if (el) {
+    el.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.88rem;color:var(--text-muted);">
+        <div><strong style="color:var(--text-main);">Versiyon:</strong> ${APP_CONFIG.version}</div>
+        <div><strong style="color:var(--text-main);">Yıl:</strong> ${APP_CONFIG.year}</div>
+        <div><strong style="color:var(--text-main);">API:</strong> ${APP_CONFIG.api.enabled ? '<span style="color:#10b981;">Aktif</span>' : '<span style="color:#ef4444;">Simülasyon</span>'}</div>
+        <div><strong style="color:var(--text-main);">Discord Auth:</strong> ${APP_CONFIG.discord.enabled ? '<span style="color:#10b981;">Aktif</span>' : '<span style="color:#ef4444;">Devre Dışı</span>'}</div>
+        <div><strong style="color:var(--text-main);">e-İmza Sağlayıcı:</strong> ${APP_CONFIG.eSignProvider.name}</div>
+      </div>`;
+  }
+});
+</script>
+</body>
+</html>

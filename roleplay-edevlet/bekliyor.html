@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onay Bekleniyor - Amsterdam RP</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div><a href="index.html">Ana Sayfa</a></div>
+  </div>
+</div>
+
+<div style="display:grid;place-items:center;min-height:80vh;padding:40px 20px;">
+  <div style="text-align:center;max-width:500px;">
+    <div class="card" style="padding:50px 30px;">
+      <div style="font-size:4rem;margin-bottom:16px;">⏳</div>
+      <h2 style="margin-bottom:8px;">Karakter Başvurunuz İnceleniyor</h2>
+      <p style="color:var(--text-muted);margin-bottom:24px;line-height:1.6;">
+        Karakter başvurunuz yetkili tarafından incelenecektir. Onaylandıktan sonra e-Devlet hizmetlerini kullanabilirsiniz.
+      </p>
+      <div id="user-info" style="background:#f8fafc;border-radius:8px;padding:16px;font-size:0.9rem;text-align:left;margin-bottom:20px;"></div>
+      <button onclick="checkStatus()" class="btn btn-primary" style="width:100%;justify-content:center;margin-bottom:10px;">
+        <i class="fas fa-sync"></i> Durumu Kontrol Et
+      </button>
+      <button onclick="Auth.logout()" class="btn btn-outline" style="width:100%;justify-content:center;">
+        <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+  const user = Auth.getUser();
+  if (!user) { window.location.href = 'giris.html'; return; }
+  if (user.status === 'Aktif') { window.location.href = 'panel.html'; return; }
+  const info = document.getElementById('user-info');
+  if (info) info.innerHTML = '<div><strong>Karakter:</strong> ' + (user.first_name||'') + ' ' + (user.last_name||'') + '</div>' +
+    '<div><strong>Discord:</strong> ' + (user.discord_username||'') + '</div>' +
+    '<div><strong>Başvuru Durumu:</strong> <span class="status-badge status-acik">' + (user.status||'Onay Bekliyor') + '</span></div>';
+});
+
+async function checkStatus() {
+  const user = Auth.getUser();
+  if (!user || !user.discord_id) return;
+  const dbUser = await DB.getUserByDiscord(user.discord_id);
+  if (dbUser && dbUser.status === 'Aktif') {
+    localStorage.setItem(APP_CONFIG.keys.auth, JSON.stringify(dbUser));
+    Toast.success('Karakter onaylandı! Yönlendiriliyorsunuz...');
+    setTimeout(() => window.location.href = 'panel.html', 1000);
+  } else if (dbUser && dbUser.status === 'Reddedildi') {
+    Toast.error('Başvurunuz reddedilmiştir.');
+  } else {
+    Toast.info('Başvurunuz henüz incelenmedi.');
+  }
+}
+</script>
+</body>
+</html>

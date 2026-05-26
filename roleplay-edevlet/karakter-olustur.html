@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karakter Oluştur - Amsterdam RP</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <div><i class="fas fa-flag" style="margin-right:6px;"></i> Amsterdam RP e-Devlet Kapısı</div>
+    <div><a href="index.html">Ana Sayfa</a></div>
+  </div>
+</div>
+
+<header class="main-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo"><div class="logo-icon">e-</div><div class="logo-text"><h1>Devlet Kapısı</h1><span>AMSTERDAM RP</span></div></a>
+    <div class="header-actions" id="header-auth"></div>
+  </div>
+</header>
+
+<div class="container" style="padding-top:40px;max-width:700px;">
+  <div class="card" style="border-left:4px solid #7c3aed;">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-size:3rem;margin-bottom:8px;">🎭</div>
+      <h2 style="font-size:1.4rem;">Karakter Oluştur</h2>
+      <p style="font-size:0.85rem;color:var(--text-muted);">RP karakterinizin bilgilerini doldurun. Başvurunuz yetkili onayından geçecektir.</p>
+      <div id="discord-info" style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:0.88rem;"></div>
+    </div>
+
+    <form id="character-form">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group" style="margin:0;">
+          <label><span style="color:#ef4444;">*</span> Karakter Adı</label>
+          <input type="text" id="char-firstname" required placeholder="örn: Jan">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label><span style="color:#ef4444;">*</span> Karakter Soyadı</label>
+          <input type="text" id="char-lastname" required placeholder="örn: de Vries">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label><span style="color:#ef4444;">*</span> Doğum Tarihi</label>
+          <input type="date" id="char-birthdate" required>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label><span style="color:#ef4444;">*</span> Kan Grubu</label>
+          <select id="char-blood" required>
+            <option value="" disabled selected>Seçiniz</option>
+            <option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>0+</option><option>0-</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Anne Adı</label>
+          <input type="text" id="char-mother" placeholder="örn: Maria">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Baba Adı</label>
+          <input type="text" id="char-father" placeholder="örn: Pieter">
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label><span style="color:#ef4444;">*</span> Şehir</label>
+          <select id="char-city" required>
+            <option>Amsterdam</option><option>Rotterdam</option><option>Utrecht</option><option>Den Haag</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0;">
+          <label>Telefon</label>
+          <input type="text" id="char-phone" placeholder="örn: 06-12345678">
+        </div>
+        <div class="form-group" style="margin:0;grid-column:1/-1;">
+          <label>Adres</label>
+          <input type="text" id="char-address" placeholder="örn: Keizersgracht 112, Amsterdam">
+        </div>
+      </div>
+
+      <div style="margin-top:20px;padding:14px;background:rgba(245,158,11,0.06);border-radius:8px;font-size:0.82rem;color:#92400e;">
+        <i class="fas fa-info-circle" style="margin-right:4px;"></i>
+        T.C. Kimlik numaranız otomatik oluşturulacaktır. Meslek bilginiz yetkili tarafından atanacaktır.
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:20px;padding:14px;">
+        <i class="fas fa-paper-plane"></i> Karakter Başvurusunu Gönder
+      </button>
+    </form>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  Theme.init();
+  initSupabase();
+
+  const user = Auth.getUser();
+  if (!user || !user.discord_id) { window.location.href = 'giris.html'; return; }
+
+  // Show Discord info
+  const info = document.getElementById('discord-info');
+  if (info) {
+    info.innerHTML = (user.discord_avatar ? '<img src="'+user.discord_avatar+'" style="width:28px;height:28px;border-radius:50%;">' : '') +
+      '<span style="color:var(--text-muted);">Discord: <strong>'+user.discord_username+'</strong></span>';
+  }
+
+  document.getElementById('character-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...';
+
+    try {
+      const newUser = await DB.createUser({
+        discord_id: user.discord_id,
+        discord_username: user.discord_username,
+        discord_avatar: user.discord_avatar,
+        first_name: document.getElementById('char-firstname').value.trim(),
+        last_name: document.getElementById('char-lastname').value.trim(),
+        birth_date: document.getElementById('char-birthdate').value,
+        blood_type: document.getElementById('char-blood').value,
+        mother_name: document.getElementById('char-mother').value.trim() || null,
+        father_name: document.getElementById('char-father').value.trim() || null,
+        city: document.getElementById('char-city').value,
+        phone: document.getElementById('char-phone').value.trim() || null,
+        address: document.getElementById('char-address').value.trim() || null,
+        status: 'Onay Bekliyor',
+        is_admin: user.isAdmin || false,
+        job: 'İşsiz'
+      });
+
+      if (newUser) {
+        // Update session
+        localStorage.setItem(APP_CONFIG.keys.auth, JSON.stringify({ ...newUser, isAdmin: user.isAdmin }));
+        Toast.success('Karakter başvurunuz gönderildi!');
+        setTimeout(() => window.location.href = 'bekliyor.html', 1200);
+      } else {
+        Toast.error('Karakter oluşturulamadı. Lütfen tekrar deneyin.');
+        btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Karakter Başvurusunu Gönder';
+      }
+    } catch (err) {
+      Toast.error('Hata: ' + err.message);
+      btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Karakter Başvurusunu Gönder';
+    }
+  });
+});
+</script>
+</body>
+</html>
