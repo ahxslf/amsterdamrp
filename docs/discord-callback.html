@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sistem Kontrolü - Amsterdam RP</title>
+<title>Doğrulanıyor... - Amsterdam RP</title>
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -13,9 +13,9 @@
 <div style="display:grid;place-items:center;min-height:100vh;background:var(--bg-body);">
   <div style="text-align:center;padding:40px;max-width:500px;">
     <div id="status-icon" style="width:80px;height:80px;border-radius:50%;background:#5865F2;color:#fff;display:grid;place-items:center;font-size:2rem;margin:0 auto 20px;">
-      <i class="fas fa-cog fa-spin"></i>
+      <i class="fab fa-discord"></i>
     </div>
-    <h2 id="cb-title">Sistem Kontrol Ediliyor...</h2>
+    <h2 id="cb-title">Discord Hesabı Doğrulanıyor...</h2>
     <p id="cb-text" style="color:var(--text-muted);margin:12px 0 20px;">Lütfen bekleyiniz.</p>
     <div id="cb-loader" style="width:48px;height:48px;border:4px solid var(--border);border-top-color:#5865F2;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div>
     <div id="cb-error" style="display:none;margin-top:20px;">
@@ -25,48 +25,123 @@
   </div>
 </div>
 
-<!-- Cache-Busting: Dosyaların güncellendiğinden emin olmak için sonuna versiyon ekledik -->
-<script src="js/config.js?v=1.1"></script>
-<script src="js/db.js?v=1.1"></script>
-<script src="js/ui.js?v=1.1"></script>
-<script src="js/auth.js?v=1.1"></script>
-
 <script>
-if (typeof showLoading === 'undefined') window.showLoading = (msg) => { document.getElementById('cb-text').textContent = msg; };
-if (typeof hideLoading === 'undefined') window.hideLoading = () => { document.getElementById('cb-loader').style.display = 'none'; };
+/** 1. CONFIG (SABİTLER) **/
+const APP_CONFIG = {
+  supabase: {
+    url: 'https://tnyxlhbdahqnggdnlzck.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRueXhsaGJkYWhxbmdnZG5semNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4MTMyNDEsImV4cCI6MjA5NTM4OTI0MX0.IfFLdGiEdVQAPnJaMUAjoBO1vS6BGAbggtfbhFesJJ8'
+  },
+  discord: {
+    clientId: '1385618368043946024',
+    redirectUri: 'https://ahxslf.github.io/amsterdamrp/discord-callback.html',
+    scope: 'identify guilds guilds.members.read',
+    requiredGuildId: '1340958005935603743',
+    adminRoleId: '1341034194335305770',
+    apiBase: 'https://discord.com/api/v10'
+  },
+  keys: { auth: 'ams_edevlet_auth_v4' }
+};
 
-document.addEventListener('DOMContentLoaded', async () => {
-  try {
-    // --- ADIM 1: DOSYA KONTROLLERİ ---
-    console.log('Kontroller başlıyor...');
-    
-    if (typeof APP_CONFIG === 'undefined') throw new Error('Kritik Hata: config.js yüklenemedi!');
-    if (typeof window.DB === 'undefined') throw new Error('Kritik Hata: db.js yüklenemedi veya DB objesi oluşturulamadı!');
-    if (typeof Auth === 'undefined') throw new Error('Kritik Hata: auth.js yüklenemedi!');
+/** 2. DB (VERİTABANI MANTIĞI) **/
+const DB_SITEM = {
+  async getUserByDiscord(discordId, supabaseClient) {
+    const { data, error } = await supabaseClient.from('users').select('*').eq('discord_id', discordId).single();
+    if (error) throw error;
+    return data;
+  },
+  async updateUser(discordId, updates, supabaseClient) {
+    const { data, error } = await supabaseClient.from('users').update(updates).eq('discord_id', discordId).select().single();
+    if (error) throw error;
+    return data;
+  }
+};
 
-    // --- ADIM 2: SUPABASE BAŞLATMA ---
-    if (typeof initSupabase === 'function') {
-      initSupabase();
-    } else {
-      throw new Error('Kritik Hata: initSupabase fonksiyonu db.js içinde bulunamadı!');
+/** 3. AUTH (DOĞRULAMA MANTIĞI) **/
+const AUTH_SITEM = {
+  async handleCallback(accessToken, supabaseClient) {
+    // 1. Discord Kullanıcı Bilgileri
+    const userRes = await fetch(APP_CONFIG.discord.apiBase + '/users/@me', { 
+      headers: { Authorization: 'Bearer ' + accessToken } 
+    });
+    if (!userRes.ok) throw new Error('Discord bilgileri alınamadı. Token geçersiz.');
+    const discordUser = await userRes.json();
+
+    // 2. Sunucu Kontrolü
+    const guildsRes = await fetch(APP_CONFIG.discord.apiBase + '/users/@me/guilds', { 
+      headers: { Authorization: 'Bearer ' + accessToken } 
+    });
+    const guilds = await guildsRes.json();
+    if (!guilds.some(g => g.id === APP_CONFIG.discord.requiredGuildId)) {
+      throw new Error('Amsterdam RP Discord sunucusuna üye değilsiniz!');
     }
 
-    // --- ADIM 3: GİRİŞ İŞLEMİ ---
+    // 3. Admin Rolü
+    let isAdmin = false;
+    try {
+      const mRes = await fetch(APP_CONFIG.discord.apiBase + '/users/@me/guilds/' + APP_CONFIG.discord.requiredGuildId + '/member', { 
+        headers: { Authorization: 'Bearer ' + accessToken } 
+      });
+      if (mRes.ok) {
+        const m = await mRes.json();
+        isAdmin = m.roles && m.roles.includes(APP_CONFIG.discord.adminRoleId);
+      }
+    } catch(e){}
+
+    // 4. Veritabanı Kontrolü
+    let dbUser = await DB_SITEM.getUserByDiscord(discordUser.id, supabaseClient);
+
+    if (!dbUser) {
+      const sessionUser = {
+        discord_id: discordUser.id,
+        discord_username: discordUser.username,
+        discord_avatar: discordUser.avatar ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : null,
+        isAdmin: isAdmin,
+        status: 'no_character'
+      };
+      localStorage.setItem(APP_CONFIG.keys.auth, JSON.stringify(sessionUser));
+      window.location.href = 'karakter-olustur.html';
+      return;
+    }
+
+    await DB_SITEM.updateUser(discordUser.id, {
+      discord_username: discordUser.username,
+      discord_avatar: discordUser.avatar ? `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png` : null,
+      is_admin: isAdmin
+    }, supabaseClient);
+
+    if (dbUser.status === 'Onay Bekliyor') {
+      localStorage.setItem(APP_CONFIG.keys.auth, JSON.stringify({ ...dbUser, isAdmin }));
+      window.location.href = 'bekliyor.html';
+      return;
+    }
+    if (dbUser.status === 'Reddedildi') throw new Error('Karakter başvurunuz reddedilmiştir.');
+
+    localStorage.setItem(APP_CONFIG.keys.auth, JSON.stringify({ ...dbUser, isAdmin }));
+    window.location.href = isAdmin ? 'admin.html' : 'panel.html';
+  }
+};
+
+/** 4. ANA ÇALIŞTIRICI **/
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    // Supabase'i başlat
+    if (typeof supabase === 'undefined') throw new Error('Supabase kütüphanesi yüklenemedi.');
+    const supabaseClient = supabase.createClient(APP_CONFIG.supabase.url, APP_CONFIG.supabase.anonKey);
+
     const hash = window.location.hash.substring(1);
     const params = new URLSearchParams(hash);
     const accessToken = params.get('access_token');
 
-    if (!accessToken) {
-      throw new Error('Erişim jetonu (access_token) bulunamadı. Lütfen tekrar giriş yapın.');
-    }
+    if (!accessToken) throw new Error('Erişim jetonu bulunamadı!');
 
-    await Auth.handleCallback(accessToken);
+    await AUTH_SITEM.handleCallback(accessToken, supabaseClient);
 
   } catch (err) {
-    console.error('Sistem Hatası:', err);
+    console.error('Hata:', err);
     document.getElementById('status-icon').style.background = 'var(--primary-red)';
     document.getElementById('status-icon').innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
-    document.getElementById('cb-title').textContent = 'Sistem Hatası!';
+    document.getElementById('cb-title').textContent = 'Giriş Hatası!';
     document.getElementById('cb-loader').style.display = 'none';
     document.getElementById('cb-error').style.display = 'block';
     document.getElementById('error-msg').textContent = err.message;
