@@ -1,57 +1,34 @@
 /**
- * AMSTERDAM RP - DATABASE v4.1
- * Supabase Integration - Ultra Stable Version
+ * AMSTERDAM RP - DATABASE v4.2
+ * Conflict-Free Version
  */
 
-// 1. DB Objesini Hemen Tanımla (Hata olsa bile DB tanımlı kalsın)
+// 'supabase' ismini kullanmıyoruz, 'supabaseClient' kullanıyoruz
 window.DB = {
   async getUserByDiscord(discordId) {
     try {
-      if (!window.supabaseClient) throw new Error('Supabase başlatılmadı. Lütfen sayfayı yenileyin.');
-      const { data, error } = await window.supabaseClient
-        .from('users')
-        .select('*')
-        .eq('discord_id', discordId)
-        .single();
+      if (!window.supabaseClient) throw new Error('Supabase başlatılmadı!');
+      const { data, error } = await window.supabaseClient.from('users').select('*').eq('discord_id', discordId).single();
       if (error) throw error;
       return data;
-    } catch (err) {
-      console.error('DB.getUserByDiscord Error:', err);
-      throw err;
-    }
+    } catch (err) { throw err; }
   },
-
   async updateUser(discordId, updates) {
     try {
-      if (!window.supabaseClient) throw new Error('Supabase başlatılmadı.');
-      const { data, error } = await window.supabaseClient
-        .from('users')
-        .update(updates)
-        .eq('discord_id', discordId)
-        .select()
-        .single();
+      if (!window.supabaseClient) throw new Error('Supabase başlatılmadı!');
+      const { data, error } = await window.supabaseClient.from('users').update(updates).eq('discord_id', discordId).select().single();
       if (error) throw error;
       return data;
-    } catch (err) {
-      console.error('DB.updateUser Error:', err);
-      throw err;
-    }
+    } catch (err) { throw err; }
   }
 };
 
-// 2. Supabase Başlatma Fonksiyonu (Ayrı bir fonksiyon olarak)
 window.initSupabase = function() {
   try {
-    console.log('Supabase başlatılıyor...');
-    if (typeof supabase === 'undefined') {
-      throw new Error('Supabase CDN kütüphanesi yüklenemedi.');
-    }
-    
-    // Doğru başlatma yöntemi
+    // Global supabase kütüphanesini kullanarak istemciyi oluştur
     window.supabaseClient = supabase.createClient(APP_CONFIG.supabase.url, APP_CONFIG.supabase.anonKey);
-    console.log('Supabase başarıyla başlatıldı.');
+    console.log('Supabase başarıyla yüklendi.');
   } catch (err) {
-    console.error('Supabase Init Kritik Hata:', err);
-    alert('Kritik Hata: ' + err.message);
+    console.error('Supabase Init Hatası:', err);
   }
 };
