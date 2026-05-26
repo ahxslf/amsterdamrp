@@ -19,6 +19,7 @@
     <p id="cb-text" style="color:var(--text-muted);margin:12px 0 20px;">Lütfen bekleyiniz.</p>
     <div id="cb-loader" style="width:48px;height:48px;border:4px solid var(--border);border-top-color:#5865F2;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div>
     <div id="cb-error" style="display:none;margin-top:20px;">
+      <p id="error-msg" style="color:var(--primary-red);margin-bottom:15px;font-size:0.9rem;"></p>
       <a href="giris.html" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Giriş Sayfasına Dön</a>
     </div>
   </div>
@@ -29,23 +30,48 @@
 <script src="js/ui.js"></script>
 <script src="js/auth.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  Theme.init();
-  initSupabase();
+// Güvenlik: Eğer ui.js yüklenemediyse veya fonksiyonlar eksikse crash olmasın
+if (typeof showLoading === 'undefined') {
+  window.showLoading = (msg) => {
+    document.getElementById('cb-text').textContent = msg || 'Doğrulanıyor...';
+    console.log('Loading:', msg);
+  };
+}
+if (typeof hideLoading === 'undefined') {
+  window.hideLoading = () => {
+    document.getElementById('cb-loader').style.display = 'none';
+  };
+}
 
-  const hash = window.location.hash.substring(1);
-  const params = new URLSearchParams(hash);
-  const accessToken = params.get('access_token');
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    // Tema ve Supabase başlangıcı
+    if (typeof Theme !== 'undefined') Theme.init();
+    if (typeof initSupabase === 'function') {
+      initSupabase();
+    } else {
+      console.error('initSupabase fonksiyonu bulunamadı!');
+    }
 
-  if (!accessToken) {
-    document.getElementById('cb-title').textContent = 'Hata!';
-    document.getElementById('cb-text').textContent = 'Erişim jetonu bulunamadı.';
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+
+    if (!accessToken) {
+      throw new Error('Erişim jetonu (access_token) bulunamadı. Lütfen tekrar giriş yapın.');
+    }
+
+    // Auth işlemini başlat
+    await Auth.handleCallback(accessToken);
+
+  } catch (err) {
+    console.error('Callback Error:', err);
+    document.getElementById('cb-title').textContent = 'Hata Oluştu!';
+    document.getElementById('cb-text').textContent = 'İşlem sırasında bir sorun meydana geldi.';
     document.getElementById('cb-loader').style.display = 'none';
     document.getElementById('cb-error').style.display = 'block';
-    return;
+    document.getElementById('error-msg').textContent = err.message;
   }
-
-  Auth.handleCallback(accessToken);
 });
 </script>
 </body>
