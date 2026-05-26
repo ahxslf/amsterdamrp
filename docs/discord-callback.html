@@ -33,19 +33,19 @@ document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   initSupabase();
 
-  const hash = window.location.hash.substring(1);
-  const params = new URLSearchParams(hash);
-  const accessToken = params.get('access_token');
+  // Discord OAuth2 code parametresini al (query string)
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
 
-  if (!accessToken) {
+  if (!code) {
     document.getElementById('cb-title').textContent = 'Hata!';
-    document.getElementById('cb-text').textContent = 'Erişim jetonu bulunamadı.';
+    document.getElementById('cb-text').textContent = 'Yetkilendirme kodu bulunamadı.';
     document.getElementById('cb-loader').style.display = 'none';
     document.getElementById('cb-error').style.display = 'block';
     return;
   }
 
-  Auth.handleCallback(accessToken);
+  Auth.handleDiscordCallback(code);
 });
 </script>
 </body>
