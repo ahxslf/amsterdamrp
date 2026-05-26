@@ -1,22 +1,18 @@
 /**
- * AMSTERDAM RP - DATABASE v4.0
- * Supabase Integration
+ * AMSTERDAM RP - DATABASE v4.1
+ * Supabase Integration - Ultra Stable Version
  */
 
-// Global DB objesini tanımla (window'a bağlayarak erişilebilirliği garanti ediyoruz)
+// 1. DB Objesini Hemen Tanımla (Hata olsa bile DB tanımlı kalsın)
 window.DB = {
-  
-  // Kullanıcıyı Discord ID ile getir
   async getUserByDiscord(discordId) {
     try {
-      if (typeof supabase === 'undefined') throw new Error('Supabase istemcisi yüklenemedi.');
-      
-      const { data, error } = await supabase
+      if (!window.supabaseClient) throw new Error('Supabase başlatılmadı. Lütfen sayfayı yenileyin.');
+      const { data, error } = await window.supabaseClient
         .from('users')
         .select('*')
         .eq('discord_id', discordId)
         .single();
-
       if (error) throw error;
       return data;
     } catch (err) {
@@ -25,81 +21,37 @@ window.DB = {
     }
   },
 
-  // Kullanıcı bilgilerini güncelle
   async updateUser(discordId, updates) {
     try {
-      if (typeof supabase === 'undefined') throw new Error('Supabase istemcisi yüklenemedi.');
-      
-      const { data, error } = await supabase
+      if (!window.supabaseClient) throw new Error('Supabase başlatılmadı.');
+      const { data, error } = await window.supabaseClient
         .from('users')
         .update(updates)
         .eq('discord_id', discordId)
         .select()
         .single();
-
       if (error) throw error;
       return data;
     } catch (err) {
       console.error('DB.updateUser Error:', err);
       throw err;
     }
-  },
-
-  // Kullanıcıyı onayla
-  async approveUser(discordId, adminName) {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .update({ 
-          status: 'Aktif', 
-          approved_by: adminName, 
-          approved_at: new Date().toISOString() 
-        })
-        .eq('discord_id', discordId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    } catch (err) {
-      console.error('DB.approveUser Error:', err);
-      throw err;
-    }
-  },
-
-  // Kullanıcıyı reddet
-  async rejectUser(discordId, adminName, reason) {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .update({ 
-          status: 'Reddedildi', 
-          approved_by: adminName, 
-          rejection_reason: reason 
-        })
-        .eq('discord_id', discordId)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    } catch (err) {
-      console.error('DB.rejectUser Error:', err);
-      throw err;
-    }
   }
 };
 
-// Supabase Başlatma Fonksiyonu
+// 2. Supabase Başlatma Fonksiyonu (Ayrı bir fonksiyon olarak)
 window.initSupabase = function() {
   try {
+    console.log('Supabase başlatılıyor...');
     if (typeof supabase === 'undefined') {
-      // Supabase CDN üzerinden yüklendiği için global supabase objesi kullanılır
-      const { createClient } = window.supabase;
-      window.supabase = createClient(APP_CONFIG.supabase.url, APP_CONFIG.supabase.anonKey);
-      console.log('Supabase başarıyla başlatıldı.');
+      throw new Error('Supabase CDN kütüphanesi yüklenemedi.');
     }
+    
+    // Doğru başlatma yöntemi
+    window.supabaseClient = supabase.createClient(APP_CONFIG.supabase.url, APP_CONFIG.supabase.anonKey);
+    console.log('Supabase başarıyla başlatıldı.');
   } catch (err) {
-    console.error('Supabase init hatası:', err);
+    console.error('Supabase Init Kritik Hata:', err);
+    alert('Kritik Hata: ' + err.message);
   }
 };
