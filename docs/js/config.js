@@ -18,7 +18,6 @@ const APP_CONFIG = {
   // Discord OAuth2
   discord: {
     clientId: '1385618368043946024',
-    // GitHub Pages root path için güncellendi
     redirectUri: 'https://ahxslf.github.io/amsterdamrp/discord-callback.html',
     scope: 'identify guilds guilds.members.read',
     requiredGuildId: '1340958005935603743',
