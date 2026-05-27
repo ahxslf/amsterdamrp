@@ -22,7 +22,8 @@ const APP_CONFIG = {
     scope: 'identify guilds guilds.members.read',
     requiredGuildId: '1340958005935603743',
     adminRoleId: '1341034194335305770',
-    apiBase: 'https://discord.com/api/v10'
+    apiBase: 'https://discord.com/api/v10',
+    enabled: true
   },
 
   eSignProvider: {
