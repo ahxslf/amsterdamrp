@@ -1,7 +1,7 @@
 
 // ===== E-SIGN USB FLOW (with dual-sign + preview) =====
 function startESignFlow(docId) {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user || !DB.hasApprovedESign(user.tc)) { Toast.error('e-İmza sertifikanız yok.'); return; }
   const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
@@ -14,7 +14,7 @@ function startESignFlow(docId) {
 }
 
 function simulateUSBPlug(docId) {
-  const user = Auth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
+  const user = RPAuth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
   const d = document.getElementById('usb-step-detect');
   if (d) { d.innerHTML = `<div style="font-size:3rem;animation:pulse 1s infinite;">🔌</div><h3>Tespit Ediliyor...</h3><div style="margin-top:20px;"><div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:#10b981;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div></div>`; }
   setTimeout(() => { ESignUSB.setUSBActive(); showESignInfoStep(user, cert, doc); }, 2000);
@@ -32,7 +32,7 @@ function showDocPreviewBeforeSign(doc, user, cert) {
 }
 
 function proceedToSecondPartySign(docId) {
-  const user = Auth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
+  const user = RPAuth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
   if (ESignUSB.isUSBActive()) { showESignInfoStep(user, cert, doc); } else {
     Modal.open(`<div class="modal-header" style="background:linear-gradient(135deg,#1a1d23,#2d323b);color:#fff;"><h3><i class="fas fa-usb" style="margin-right:8px;"></i>e-İmza USB</h3><button onclick="Modal.close()" class="btn btn-sm" style="border:1px solid rgba(255,255,255,0.3);color:#fff;"><i class="fas fa-times"></i></button></div><div class="modal-body" style="text-align:center;padding:40px 24px;"><div id="usb-step-detect"><div style="font-size:3rem;margin-bottom:16px;animation:pulse 1.5s infinite;">🔌</div><h3>E-İmza USB'si Tespit Ediliyor...</h3><div style="margin-top:20px;"><div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--primary-blue);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div></div></div></div>`);
@@ -54,7 +54,7 @@ function buildTemplatePreviewHTML(doc) {
 }
 
 function showESignDocStep(docId) {
-  const user = Auth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
+  const user = RPAuth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
   const creator = DB.getUserByTC(doc.tc); const tpl = buildTemplatePreviewHTML(doc);
   let dualHtml = '';
   if (doc.dualSign || doc.secondPartyTc) { const p2 = DB.getUserByTC(doc.secondPartyTc); dualHtml = `<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.82rem;"><div style="padding:10px;background:${doc.signedAt?'#d1fae5':'#fef3c7'};border-radius:6px;"><strong>1. Taraf:</strong> ${creator?creator.firstName+' '+creator.lastName:'—'}<br>${doc.signedAt?'✓ İmzalandı':'⏳ Bekliyor'}</div><div style="padding:10px;background:${doc.secondPartySignedAt?'#d1fae5':'#fef3c7'};border-radius:6px;"><strong>2. Taraf:</strong> ${p2?p2.firstName+' '+p2.lastName:'—'}<br>${doc.secondPartySignedAt?'✓ İmzalandı':'⏳ Bekliyor'}</div></div>`; }
@@ -63,7 +63,7 @@ function showESignDocStep(docId) {
 
 function confirmESign(docId) {
   if (!confirm('e-İmza ile imzalamak istediğinize emin misiniz?')) return;
-  const user = Auth.getUser(); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
+  const user = RPAuth.getUser(); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
   const isSecondParty = doc.secondPartyTc === user.tc && doc.tc !== user.tc;
   Modal.open(`<div class="modal-body" style="text-align:center;padding:50px;"><div style="width:60px;height:60px;border:4px solid var(--border);border-top-color:#059669;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;"></div><h3>İmzalanıyor...</h3></div>`);
   setTimeout(() => {
