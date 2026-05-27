@@ -50,6 +50,7 @@
       <div id="police-search"></div>
     </div>
     <div id="police-reports" style="margin-top:20px;"></div>
+    <div id="police-finance-queue" style="margin-top:20px;"></div>
   </div>
 </div>
 
@@ -60,12 +61,13 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=44"></script>
-<script src="js/db.js?v=44"></script>
-<script src="js/ui.js?v=44"></script>
-<script src="js/auth.js?v=44"></script>
-<script src="js/services.js?v=44"></script>
-<script src="js/police.js?v=44"></script>
+<script src="js/config.js?v=45"></script>
+<script src="js/db.js?v=45"></script>
+<script src="js/ui.js?v=45"></script>
+<script src="js/auth.js?v=45"></script>
+<script src="js/services.js?v=45"></script>
+<script src="js/rp-extensions.js?v=45"></script>
+<script src="js/police.js?v=45"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
@@ -84,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     document.getElementById('police-content').style.display = 'block';
     initPolicePage();
+    if (typeof renderPoliceQueue === 'function') renderPoliceQueue();
   }
 });
 </script>

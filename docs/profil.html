@@ -110,12 +110,13 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=44"></script>
-<script src="js/db.js?v=44"></script>
-<script src="js/ui.js?v=44"></script>
-<script src="js/auth.js?v=44"></script>
-<script src="js/services.js?v=44"></script>
-<script src="js/police.js?v=44"></script>
+<script src="js/config.js?v=45"></script>
+<script src="js/db.js?v=45"></script>
+<script src="js/ui.js?v=45"></script>
+<script src="js/auth.js?v=45"></script>
+<script src="js/services.js?v=45"></script>
+<script src="js/rp-extensions.js?v=45"></script>
+<script src="js/police.js?v=45"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
@@ -129,20 +130,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
     const tc = params.get('tc') || (RPAuth.getUser()?.tc);
     if (tc) {
-      const docs = DB.getESignatures(tc);
-      if (docs.length === 0) {
-        esEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Kayıtlı e-imza belgesi yok.</p>';
-      } else {
-        esEl.innerHTML = docs.map(d => `
-          <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-            <div>
-              <div style="font-weight:600;font-size:0.9rem;">${d.title}</div>
-              <div style="font-size:0.78rem;color:var(--text-muted);">${d.id} • ${formatDate(d.date)}</div>
+      Promise.resolve(DB.getESignatures(tc)).then((docs) => {
+        docs = Array.isArray(docs) ? docs : [];
+        if (docs.length === 0) {
+          esEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Kayıtlı e-imza belgesi yok.</p>';
+        } else {
+          esEl.innerHTML = docs.map(d => `
+            <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-weight:600;font-size:0.9rem;">${d.title || 'e-İmza Belgesi'}</div>
+                <div style="font-size:0.78rem;color:var(--text-muted);">${d.id} • ${formatDate(d.date || d.created_at)}</div>
+              </div>
+              <span class="status-badge ${d.status === 'İmzalandı' ? 'status-odendi' : 'status-acik'}">${d.status || '—'}</span>
             </div>
-            <span class="status-badge ${d.status === 'İmzalandı' ? 'status-odendi' : 'status-acik'}">${d.status}</span>
-          </div>
-        `).join('');
-      }
+          `).join('');
+        }
+      }).catch(() => { esEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Kayıtlı e-imza belgesi yok.</p>'; });
     }
   }
 });

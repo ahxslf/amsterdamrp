@@ -48,13 +48,14 @@
   </div>
 </div>
 
-<script src="js/config.js?v=44"></script>
+<script src="js/config.js?v=45"></script>
 <script>
   // Minimal init — no Supabase needed for login page
   const Toast = { show(m,t,d=3200){ const c=document.querySelector('.toast-container')||Object.assign(document.createElement('div'),{className:'toast-container'}); if(!c.parentNode)document.body.appendChild(c); const e=document.createElement('div');e.className='toast '+(t||'info');e.innerHTML='<span>'+m+'</span>';c.appendChild(e);setTimeout(()=>{e.style.opacity='0';setTimeout(()=>e.remove(),300);},d); }, success(m){this.show(m,'success');}, error(m){this.show(m,'error');}, info(m){this.show(m,'info');}, warning(m){this.show(m,'warning');} };
   function showLoading(){}
   function hideLoading(){}
 </script>
-<script src="js/auth.js?v=44"></script>
+<script src="js/auth.js?v=45"></script>
+<script src="js/rp-extensions.js?v=45"></script>
 </body>
 </html>

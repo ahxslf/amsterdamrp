@@ -1,7 +1,7 @@
 
 // ===== E-SIGN USB FLOW (with dual-sign + preview) =====
 function startESignFlow(docId) {
-  const user = RPAuth.getUser();
+  const user = Auth.getUser();
   if (!user || !DB.hasApprovedESign(user.tc)) { Toast.error('e-İmza sertifikanız yok.'); return; }
   const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
@@ -27,7 +27,7 @@ function startESignFlow(docId) {
 }
 
 function simulateUSBPlug(docId) {
-  const user = RPAuth.getUser();
+  const user = Auth.getUser();
   const cert = DB.getESignCertificate(user.tc);
   const doc = DB.data.eSignatures.find(d => d.id === docId);
   const d = document.getElementById('usb-step-detect');
@@ -81,7 +81,7 @@ function showDocPreviewBeforeSign(doc, user, cert) {
 }
 
 function proceedToSecondPartySign(docId) {
-  const user = RPAuth.getUser();
+  const user = Auth.getUser();
   const cert = DB.getESignCertificate(user.tc);
   const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
@@ -151,7 +151,7 @@ function buildTemplatePreviewHTML(doc) {
 
 // ===== BELGE İMZALAMA ADIMI (detaylı içerik gösterimi) =====
 function showESignDocStep(docId) {
-  const user = RPAuth.getUser();
+  const user = Auth.getUser();
   const cert = DB.getESignCertificate(user.tc);
   const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
@@ -207,7 +207,7 @@ function showESignDocStep(docId) {
 // ===== CONFIRM E-SIGN (handles both first and second party) =====
 function confirmESign(docId) {
   if (!confirm('e-İmza ile imzalamak istediğinize emin misiniz?')) return;
-  const user = RPAuth.getUser();
+  const user = Auth.getUser();
   const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
 

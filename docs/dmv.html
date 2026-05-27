@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DMV / RDW Paneli - Amsterdam RP</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body data-page="dmv">
+<div class="top-bar" style="background:linear-gradient(90deg,#065f46,#059669);"><div class="top-bar-inner"><div><i class="fas fa-id-card" style="margin-right:6px;"></i> DMV / RDW Amsterdam</div><div><a href="panel.html">Vatandaş Paneli</a><a href="#" onclick="Theme.toggle();return false;">Tema</a></div></div></div>
+<header class="main-header"><div class="header-inner"><a href="dmv.html" class="logo"><div class="logo-icon" style="background:#059669;"><i class="fas fa-id-card"></i></div><div class="logo-text"><h1>DMV Paneli</h1><span>EHLİYET, SÜRÜŞ TESTİ VE ARAÇ KAYDI</span></div></a><div class="header-actions" id="header-auth"></div></div></header>
+<div class="container" style="padding-top:30px;"><div id="dmv-panel"><div class="card">Yükleniyor...</div></div></div>
+<footer class="main-footer"><div class="footer-bottom" style="border:none;padding:16px 20px;margin:0 auto;max-width:1200px;"><div style="font-size:0.78rem;color:var(--text-muted);">© 2026 Amsterdam RP DMV / RDW</div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js?v=45"></script>
+<script src="js/db.js?v=45"></script>
+<script src="js/ui.js?v=45"></script>
+<script src="js/auth.js?v=45"></script>
+<script src="js/services.js?v=45"></script>
+<script src="js/rp-extensions.js?v=45"></script>
+<script>document.addEventListener('DOMContentLoaded',()=>{Theme.init();initSupabase();updateHeaderAuth();initDMVPanel();});</script>
+</body>
+</html>

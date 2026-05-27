@@ -29,6 +29,17 @@
     <div><h2 style="font-size:1.3rem;">Yönetim Paneli</h2><p style="font-size:0.82rem;color:var(--text-muted);">Ceza onayları, e-İmza başvuruları, kullanıcı yönetimi</p></div>
   </div>
 
+  <div id="admin-extra-panels" class="card" style="margin-bottom:20px;border-left:4px solid #7c3aed;">
+    <div class="card-header"><i class="fas fa-layer-group" style="color:#7c3aed;"></i><h3>Yetkili Panel Kısayolları</h3></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="polis.html" class="btn btn-outline btn-sm"><i class="fas fa-shield-alt"></i> Polis Paneli</a>
+      <a href="dmv.html" class="btn btn-outline btn-sm"><i class="fas fa-id-card"></i> DMV Paneli</a>
+      <a href="vergi.html" class="btn btn-outline btn-sm"><i class="fas fa-receipt"></i> Vergi Dairesi</a>
+      <a href="eadalet.html" class="btn btn-outline btn-sm"><i class="fas fa-balance-scale"></i> Amsterdam Adliyesi</a>
+      <a href="digisign-panel.html" class="btn btn-outline btn-sm"><i class="fas fa-certificate"></i> DigiSign Yetkili</a>
+      <a href="sirket.html" class="btn btn-outline btn-sm"><i class="fas fa-store"></i> Şirket Paneli</a>
+    </div>
+  </div>
   <div id="admin-overview" style="margin-bottom:20px;"></div>
   <div id="admin-pending-fines" style="margin-bottom:20px;"></div>
   <div id="admin-esign-apps" style="margin-bottom:20px;"></div>
@@ -45,12 +56,13 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=44"></script>
-<script src="js/db.js?v=44"></script>
-<script src="js/ui.js?v=44"></script>
-<script src="js/auth.js?v=44"></script>
-<script src="js/services.js?v=44"></script>
-<script src="js/admin.js?v=44"></script>
+<script src="js/config.js?v=45"></script>
+<script src="js/db.js?v=45"></script>
+<script src="js/ui.js?v=45"></script>
+<script src="js/auth.js?v=45"></script>
+<script src="js/services.js?v=45"></script>
+<script src="js/rp-extensions.js?v=45"></script>
+<script src="js/admin.js?v=45"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
