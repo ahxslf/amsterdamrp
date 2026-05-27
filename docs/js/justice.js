@@ -5,10 +5,10 @@
  */
 
 function initJusticePage() {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user) { renderPublicJustice(); return; }
 
-  const isJusticeRole = Auth.isJustice() || Auth.isAdmin();
+  const isJusticeRole = RPAuth.isJustice() || RPAuth.isAdmin();
 
   // Herkes dava açma formunu görsün
   renderFileCaseSection();
@@ -37,7 +37,7 @@ function renderPublicJustice() {
 // ===================== HERKES: DAVA AÇ =====================
 function renderFileCaseSection() {
   const el = document.getElementById('justice-file-case'); if (!el) return;
-  const user = Auth.getUser(); if (!user) return;
+  const user = RPAuth.getUser(); if (!user) return;
 
   el.innerHTML = `
     <div class="card" style="border-left:4px solid #ea580c;">
@@ -96,7 +96,7 @@ function renderFileCaseSection() {
       DB.addNotification({ tc: s.tc, title: 'Yeni Dava Başvurusu', body: newCase.caseNo + ' — "' + newCase.title + '" konulu dava başvurusu onayınızı bekliyor. Davacı: ' + newCase.plaintiff, type: 'warning', icon: 'fas fa-folder-plus' });
     });
 
-    if (Auth.isJustice() || Auth.isAdmin()) { renderCaseList(); renderJusticeOverview(); renderPendingCases(); }
+    if (RPAuth.isJustice() || RPAuth.isAdmin()) { renderCaseList(); renderJusticeOverview(); renderPendingCases(); }
     else { renderMyCases(); }
   });
 }
@@ -104,7 +104,7 @@ function renderFileCaseSection() {
 // ===================== VATANDAŞ: KENDİ DAVALARIM =====================
 function renderMyCases() {
   const el = document.getElementById('justice-my-cases'); if (!el) return;
-  const user = Auth.getUser(); if (!user) return;
+  const user = RPAuth.getUser(); if (!user) return;
   const myCases = DB.getCourtCases({ involvedTc: user.tc });
   if (myCases.length === 0) {
     el.innerHTML = '<div class="card"><div class="empty-state"><div class="icon">⚖️</div><h4>Aktif davanız bulunmuyor.</h4></div></div>';
@@ -118,7 +118,7 @@ function renderMyCases() {
 // ===================== SAVCI: ONAY BEKLEYEN DAVALAR =====================
 function renderPendingCases() {
   const el = document.getElementById('justice-pending-cases'); if (!el) return;
-  if (!Auth.isProsecutor() && !Auth.isAdmin()) { el.innerHTML = ''; return; }
+  if (!RPAuth.isProsecutor() && !RPAuth.isAdmin()) { el.innerHTML = ''; return; }
 
   const pending = DB.getCourtCases({ status: 'Savcı Onayı Bekliyor' });
   if (pending.length === 0) { el.innerHTML = ''; return; }
@@ -132,7 +132,7 @@ function renderPendingCases() {
 }
 
 function approveCaseUI(id) {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   const court = document.getElementById('approve-court-' + id)?.value?.trim();
   if (!court) { Toast.warning('Mahkeme ataması yapınız.'); return; }
   const c = DB.getCourtCaseById(id); if (!c) return;
@@ -155,7 +155,7 @@ function rejectCaseUI(id) {
   if (!reason) return;
   const c = DB.getCourtCaseById(id); if (!c) return;
   c.status = 'Reddedildi';
-  c.history.push({ date: todayISO(), action: 'Dava savcılık tarafından reddedildi. Sebep: ' + reason, by: Auth.getUser()?.firstName + ' ' + Auth.getUser()?.lastName });
+  c.history.push({ date: todayISO(), action: 'Dava savcılık tarafından reddedildi. Sebep: ' + reason, by: RPAuth.getUser()?.firstName + ' ' + RPAuth.getUser()?.lastName });
   DB.save();
   DB.addNotification({ tc: c.plaintiffTc, title: 'Dava Başvurunuz Reddedildi', body: c.caseNo + ' — Sebep: ' + reason, type: 'error', icon: 'fas fa-times-circle' });
   Toast.info('Dava reddedildi.');
@@ -179,9 +179,9 @@ function renderJusticeOverview() {
 // ===================== DAVA LİSTESİ =====================
 function renderCaseList() {
   const el = document.getElementById('justice-cases'); if (!el) return;
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   let cases = DB.getCourtCases().filter(c => c.status !== 'Savcı Onayı Bekliyor' && c.status !== 'Reddedildi');
-  if (Auth.isLawyer() && !Auth.isAdmin()) cases = cases.filter(c => c.defenseAttorneyTc === user.tc || DB.hasActiveMandateFor(user.tc, c.defendantTc));
+  if (RPAuth.isLawyer() && !RPAuth.isAdmin()) cases = cases.filter(c => c.defenseAttorneyTc === user.tc || DB.hasActiveMandateFor(user.tc, c.defendantTc));
   if (cases.length === 0) { el.innerHTML = '<div class="empty-state"><div class="icon">⚖️</div><h4>Aktif dava bulunamadı.</h4></div>'; return; }
   const sc = {'Soruşturma':'status-guvluk','Duruşma Bekliyor':'status-acik','Karar Verildi':'status-odendi','Düşürüldü':'status-odenmedi','Temyiz':'status-odenmedi'};
   el.innerHTML = '<div style="overflow-x:auto;"><table class="data-table"><thead><tr><th>Dosya No</th><th>Başlık</th><th>Sanık</th><th>Yargıç</th><th>Savcı</th><th>Müdafi</th><th>Tanık</th><th>Durum</th><th></th></tr></thead><tbody>' +
@@ -192,7 +192,7 @@ function renderCaseList() {
 // ===================== DAVA DETAY (TAM PANEL — INLINE, MODAL DEĞİL) =====================
 function viewCase(id) {
   const c = DB.getCourtCaseById(id); if (!c) return;
-  const canManage = Auth.isJudge() || Auth.isProsecutor() || Auth.isAdmin();
+  const canManage = RPAuth.isJudge() || RPAuth.isProsecutor() || RPAuth.isAdmin();
 
   // Build full-page detail instead of modal for better UX
   Modal.open(`
@@ -221,7 +221,7 @@ function showTab(tab, caseId) {
   if (act) { act.style.borderBottom = '2px solid var(--primary-blue)'; act.style.color = 'var(--text-main)'; act.classList.add('active-ctab'); }
   const el = document.getElementById('ctab-content'); if (!el) return;
   const c = DB.getCourtCaseById(caseId); if (!c) return;
-  const canManage = Auth.isJudge() || Auth.isProsecutor() || Auth.isAdmin();
+  const canManage = RPAuth.isJudge() || RPAuth.isProsecutor() || RPAuth.isAdmin();
 
   if (tab === 'info') { el.innerHTML = buildInfoTab(c, canManage); }
   else if (tab === 'parties') { el.innerHTML = buildPartiesTab(c, canManage); }
@@ -259,7 +259,7 @@ function buildInfoTab(c, canManage) {
       '<div style="display:flex;align-items:end;"><button onclick="doSetNextHearing(' + c.id + ')" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;"><i class="fas fa-calendar"></i> Kaydet</button></div>' +
       '</div>';
 
-    if (Auth.isJudge() && c.status !== 'Karar Verildi') {
+    if (RPAuth.isJudge() && c.status !== 'Karar Verildi') {
       h += '<div style="margin-top:14px;padding:14px;background:rgba(124,58,237,0.06);border-radius:8px;"><h4 style="font-size:0.88rem;margin-bottom:8px;">⚖️ Karar Ver</h4>' +
         '<select id="cs-verdict" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-bottom:8px;font-size:0.85rem;"><option value="">Karar Türü</option><option>Beraat</option><option>Mahkumiyet</option><option>Ceza İndirimi</option><option>Erteleme</option><option>Para Cezası</option><option>Hapis Cezası</option><option>Düşürülme</option><option>Diğer</option></select>' +
         '<textarea id="cs-verdict-detail" rows="3" placeholder="Karar detayı..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;resize:vertical;"></textarea>' +
@@ -328,7 +328,7 @@ function buildHearingsTab(c) {
   else (c.hearings||[]).forEach((hr, i) => {
     h += '<div style="padding:14px;background:#f8fafc;border-radius:8px;border-left:3px solid var(--primary-blue);margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;"><span><strong>' + (i+1) + '. ' + (hr.type||'Duruşma') + '</strong> — ' + formatDate(hr.date) + '</span><span>Yargıç: ' + hr.judge + '</span></div><div style="font-size:0.9rem;line-height:1.5;">' + hr.summary + '</div></div>';
   });
-  if (Auth.isJudge()) {
+  if (RPAuth.isJudge()) {
     h += '<div style="margin-top:16px;padding:14px;background:rgba(0,0,0,0.02);border-radius:8px;"><h4 style="font-size:0.88rem;margin-bottom:10px;">📝 Not Ekle</h4><select id="ch-type" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;margin-bottom:8px;"><option>Duruşma</option><option>Keşif</option><option>Bilirkişi Raporu</option><option>Ara Karar</option><option>Ek Süre</option></select><textarea id="ch-note" rows="4" placeholder="Özet..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;resize:vertical;"></textarea><button onclick="doAddHearing(' + c.id + ')" class="btn btn-primary btn-sm" style="margin-top:8px;"><i class="fas fa-save"></i> Kaydet</button></div>';
   }
   return h;
@@ -346,28 +346,28 @@ function buildHistoryTab(c) {
 
 // ===================== ACTION HANDLERS =====================
 function doUpdateStatus(id) { const s=document.getElementById('cs-status')?.value; if(!s){Toast.warning('Seçiniz.');return;} DB.updateCaseStatus(id,s); Toast.success('Güncellendi: '+s); const c=DB.getCourtCaseById(id); if(c)DB.addNotification({tc:c.defendantTc,title:'Dava Durumu',body:c.caseNo+' — '+s,type:'warning',icon:'fas fa-gavel'}); viewCase(id); }
-function doSetNextHearing(id) { const d=document.getElementById('cs-next')?.value; if(!d){Toast.warning('Tarih seçiniz.');return;} const c=DB.getCourtCaseById(id); if(c){c.nextHearing=d;c.history.push({date:todayISO(),action:'Duruşma tarihi: '+formatDate(d),by:Auth.getUser()?.firstName+' '+Auth.getUser()?.lastName});DB.save();DB.addNotification({tc:c.defendantTc,title:'Duruşma Tarihi',body:c.caseNo+' — '+formatDate(d),type:'info',icon:'fas fa-calendar'});if(c.defenseAttorneyTc)DB.addNotification({tc:c.defenseAttorneyTc,title:'Duruşma Tarihi',body:c.caseNo+' — '+formatDate(d),type:'info',icon:'fas fa-calendar'});Toast.success('Tarih kaydedildi.');viewCase(id);} }
+function doSetNextHearing(id) { const d=document.getElementById('cs-next')?.value; if(!d){Toast.warning('Tarih seçiniz.');return;} const c=DB.getCourtCaseById(id); if(c){c.nextHearing=d;c.history.push({date:todayISO(),action:'Duruşma tarihi: '+formatDate(d),by:RPAuth.getUser()?.firstName+' '+RPAuth.getUser()?.lastName});DB.save();DB.addNotification({tc:c.defendantTc,title:'Duruşma Tarihi',body:c.caseNo+' — '+formatDate(d),type:'info',icon:'fas fa-calendar'});if(c.defenseAttorneyTc)DB.addNotification({tc:c.defenseAttorneyTc,title:'Duruşma Tarihi',body:c.caseNo+' — '+formatDate(d),type:'info',icon:'fas fa-calendar'});Toast.success('Tarih kaydedildi.');viewCase(id);} }
 function doVerdict(id) { const v=document.getElementById('cs-verdict')?.value; const d=document.getElementById('cs-verdict-detail')?.value?.trim(); if(!v){Toast.warning('Karar türü seçiniz.');return;} if(!confirm('"'+v+'" kararını onaylıyor musunuz?'))return; DB.setVerdict(id,v,d||''); Toast.success('Karar verildi.'); viewCase(id); }
 function doSetDefense(id) { const tc=document.getElementById('cp-lawyer')?.value; if(!tc){Toast.warning('Avukat seçiniz.');return;} const l=DB.getUserByTC(tc); if(!l)return; DB.setDefenseAttorney(id,tc,l.firstName+' '+l.lastName); Toast.success('Müdafi atandı.'); viewCase(id); }
 function doRemoveDefense(id) { if(!confirm('Müdafiyi çıkar?'))return; DB.removeDefenseAttorney(id); Toast.info('Çıkarıldı.'); viewCase(id); }
 function doChangeJudge(id) { const tc=document.getElementById('cp-judge')?.value; const r=document.getElementById('cp-judge-reason')?.value?.trim()||'Belirtilmedi'; if(!tc){Toast.warning('Seçiniz.');return;} const j=DB.getUserByTC(tc); if(!j)return; DB.changeJudge(id,tc,j.firstName+' '+j.lastName,r); Toast.success('Yargıç değiştirildi.'); viewCase(id); }
 function doChangeProsecutor(id) { const tc=document.getElementById('cp-prosecutor')?.value; const r=document.getElementById('cp-pros-reason')?.value?.trim()||'Belirtilmedi'; if(!tc){Toast.warning('Seçiniz.');return;} const p=DB.getUserByTC(tc); if(!p)return; DB.changeProsecutor(id,tc,p.firstName+' '+p.lastName,r); Toast.success('Savcı değiştirildi.'); viewCase(id); }
-function doAddParty(id) { const tc=document.getElementById('cp-new-tc')?.value?.trim(); const role=document.getElementById('cp-new-role')?.value; if(!tc||!role){Toast.warning('Doldurunuz.');return;} const u=DB.getUserByTC(tc); if(!u){Toast.error('Bulunamadı.');return;} const c=DB.getCourtCaseById(id); if(c&&c.parties.some(p=>p.tc===tc)){Toast.warning('Zaten ekli.');return;} DB.addParty(id,{tc,name:u.firstName+' '+u.lastName,role,addedBy:Auth.getUser()?.firstName+' '+Auth.getUser()?.lastName}); DB.addNotification({tc,title:'Davaya Eklendiniz',body:c.caseNo+' — "'+role+'" olarak',type:'info',icon:'fas fa-gavel'}); Toast.success('Eklendi.'); viewCase(id); }
+function doAddParty(id) { const tc=document.getElementById('cp-new-tc')?.value?.trim(); const role=document.getElementById('cp-new-role')?.value; if(!tc||!role){Toast.warning('Doldurunuz.');return;} const u=DB.getUserByTC(tc); if(!u){Toast.error('Bulunamadı.');return;} const c=DB.getCourtCaseById(id); if(c&&c.parties.some(p=>p.tc===tc)){Toast.warning('Zaten ekli.');return;} DB.addParty(id,{tc,name:u.firstName+' '+u.lastName,role,addedBy:RPAuth.getUser()?.firstName+' '+RPAuth.getUser()?.lastName}); DB.addNotification({tc,title:'Davaya Eklendiniz',body:c.caseNo+' — "'+role+'" olarak',type:'info',icon:'fas fa-gavel'}); Toast.success('Eklendi.'); viewCase(id); }
 function doRemoveParty(id, tc) { if(!confirm('Çıkar?'))return; DB.removeParty(id,tc); Toast.info('Çıkarıldı.'); viewCase(id); }
-function doAddWitness(id) { const tc=document.getElementById('cw-tc')?.value?.trim(); const role=document.getElementById('cw-role')?.value; const st=document.getElementById('cw-statement')?.value?.trim(); if(!tc){Toast.warning('TC giriniz.');return;} const u=DB.getUserByTC(tc); if(!u){Toast.error('Bulunamadı.');return;} DB.addWitness(id,{tc,name:u.firstName+' '+u.lastName,role,statement:st||'',date:todayISO(),addedBy:Auth.getUser()?.firstName+' '+Auth.getUser()?.lastName}); DB.addNotification({tc,title:'Tanık Çağrısı',body:DB.getCourtCaseById(id)?.caseNo+' — "'+role+'"',type:'warning',icon:'fas fa-user-check'}); Toast.success('Eklendi.'); viewCase(id); }
+function doAddWitness(id) { const tc=document.getElementById('cw-tc')?.value?.trim(); const role=document.getElementById('cw-role')?.value; const st=document.getElementById('cw-statement')?.value?.trim(); if(!tc){Toast.warning('TC giriniz.');return;} const u=DB.getUserByTC(tc); if(!u){Toast.error('Bulunamadı.');return;} DB.addWitness(id,{tc,name:u.firstName+' '+u.lastName,role,statement:st||'',date:todayISO(),addedBy:RPAuth.getUser()?.firstName+' '+RPAuth.getUser()?.lastName}); DB.addNotification({tc,title:'Tanık Çağrısı',body:DB.getCourtCaseById(id)?.caseNo+' — "'+role+'"',type:'warning',icon:'fas fa-user-check'}); Toast.success('Eklendi.'); viewCase(id); }
 function doRemoveWitness(id, tc) { if(!confirm('Çıkar?'))return; DB.removeWitness(id,tc); Toast.info('Çıkarıldı.'); viewCase(id); }
-function doAddHearing(id) { const n=document.getElementById('ch-note')?.value?.trim(); const t=document.getElementById('ch-type')?.value||'Duruşma'; if(!n){Toast.warning('Not giriniz.');return;} const u=Auth.getUser(); DB.addHearing(id,{date:todayISO(),summary:n,judge:u.firstName+' '+u.lastName,type:t}); Toast.success('Eklendi.'); viewCase(id); }
+function doAddHearing(id) { const n=document.getElementById('ch-note')?.value?.trim(); const t=document.getElementById('ch-type')?.value||'Duruşma'; if(!n){Toast.warning('Not giriniz.');return;} const u=RPAuth.getUser(); DB.addHearing(id,{date:todayISO(),summary:n,judge:u.firstName+' '+u.lastName,type:t}); Toast.success('Eklendi.'); viewCase(id); }
 
 // ===================== ROL ARAÇLARI =====================
 function renderRoleTools() {
   const el = document.getElementById('justice-role-tools'); if (!el) return;
-  if (Auth.isProsecutor() || Auth.isAdmin()) {
+  if (RPAuth.isProsecutor() || RPAuth.isAdmin()) {
     // Savcı: doğrudan dava açma (onay gerekmez)
     el.innerHTML = '<div class="card" style="border-left:4px solid #ef4444;"><h4 style="margin-bottom:6px;"><i class="fas fa-user-tie" style="color:#ef4444;margin-right:8px;"></i>Savcı — Doğrudan Dava Aç</h4><p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:10px;">Savcı olarak doğrudan dava açabilirsiniz (onay gerektirmez).</p>' +
       '<form id="prosecutor-case-form"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="form-group" style="margin:0;"><label style="font-size:0.78rem;">Başlık *</label><input type="text" id="pc-title" required placeholder="Silahlı Gasp" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;"></div><div class="form-group" style="margin:0;"><label style="font-size:0.78rem;">Sanık TC *</label><input type="text" id="pc-def-tc" required maxlength="11" placeholder="55555555555" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;"></div><div class="form-group" style="margin:0;"><label style="font-size:0.78rem;">Tür</label><select id="pc-type" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;"><option>Ceza</option><option>Hukuk</option><option>İdari</option></select></div><div class="form-group" style="margin:0;"><label style="font-size:0.78rem;">Kategori</label><select id="pc-cat" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;"><option>Ağır Ceza</option><option>Asliye Ceza</option><option>Sulh Ceza</option><option>Asliye Hukuk</option></select></div><div class="form-group" style="margin:0;grid-column:1/-1;"><label style="font-size:0.78rem;">Mahkeme *</label><input type="text" id="pc-court" required placeholder="Amsterdam Adliyesi 2. Ağır Ceza" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:0.85rem;"></div></div><button type="submit" class="btn btn-red" style="margin-top:10px;"><i class="fas fa-folder-plus"></i> Dava Aç</button></form></div>';
     document.getElementById('prosecutor-case-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
-      const user = Auth.getUser();
+      const user = RPAuth.getUser();
       const dTc = document.getElementById('pc-def-tc').value.trim();
       const dU = DB.getUserByTC(dTc);
       if (!dU) { Toast.error('Sanık bulunamadı.'); return; }
@@ -378,9 +378,9 @@ function renderRoleTools() {
       document.getElementById('prosecutor-case-form').reset();
       renderCaseList(); renderJusticeOverview();
     });
-  } else if (Auth.isJudge()) {
+  } else if (RPAuth.isJudge()) {
     el.innerHTML = '<div class="card" style="border-left:4px solid #7c3aed;"><h4><i class="fas fa-gavel" style="color:#7c3aed;margin-right:8px;"></i>Yargıç</h4><p style="font-size:0.85rem;color:var(--text-muted);margin-top:8px;">Dava listesinden bir dava seçerek tüm işlemleri yapabilirsiniz: duruşma notu, karar verme, tanık/taraf yönetimi, yargıç/savcı değişikliği.</p></div>';
-  } else if (Auth.isLawyer()) {
+  } else if (RPAuth.isLawyer()) {
     el.innerHTML = '<div class="card" style="border-left:4px solid #3b82f6;"><h4><i class="fas fa-briefcase" style="color:#3b82f6;margin-right:8px;"></i>Avukat</h4><p style="font-size:0.85rem;color:var(--text-muted);margin-top:8px;">Müvekkillerinizin davalarını takip edin.</p><div style="display:flex;gap:8px;margin-top:10px;"><a href="eimza.html" class="btn btn-outline btn-sm"><i class="fas fa-file-signature"></i> e-İmza</a><button onclick="openCaseMessaging()" class="btn btn-outline btn-sm"><i class="fas fa-envelope"></i> Mesajlar</button></div></div>';
   }
 }

@@ -101,12 +101,12 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=43"></script>
-<script src="js/db.js?v=43"></script>
-<script src="js/ui.js?v=43"></script>
-<script src="js/auth.js?v=43"></script>
-<script src="js/services.js?v=43"></script>
-<script src="js/documents.js?v=43"></script>
+<script src="js/config.js?v=44"></script>
+<script src="js/db.js?v=44"></script>
+<script src="js/ui.js?v=44"></script>
+<script src="js/auth.js?v=44"></script>
+<script src="js/services.js?v=44"></script>
+<script src="js/documents.js?v=44"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLawyerClientsPanel(document.getElementById('lawyer-clients-section'));
   // Messaging shortcut for justice roles
   const msgEl = document.getElementById('esign-messaging-shortcut');
-  if (msgEl && (Auth.isLawyer() || Auth.isJudge() || Auth.isProsecutor())) {
+  if (msgEl && (RPAuth.isLawyer() || RPAuth.isJudge() || RPAuth.isProsecutor())) {
     msgEl.innerHTML = `<div class="card" style="border-left:4px solid #1565c0;">
       <h3 style="font-size:1rem;margin-bottom:8px;"><i class="fas fa-envelope" style="color:#1565c0;margin-right:6px;"></i>Dava Mesajları</h3>
       <p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:10px;">Yargıç, savcı veya avukatlarla dava hakkında mesajlaşın.</p>

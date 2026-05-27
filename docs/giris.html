@@ -31,7 +31,7 @@
       <h2 style="font-size:1.4rem;margin-bottom:4px;">Amsterdam RP</h2>
       <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:28px;">e-Devlet Kapısı Kimlik Doğrulama</p>
 
-      <button onclick="Auth.login()" class="btn" style="width:100%;justify-content:center;gap:12px;background:#5865F2;color:#fff;border:none;padding:16px 24px;font-size:1.05rem;border-radius:12px;">
+      <button onclick="RPAuth.login()" class="btn" style="width:100%;justify-content:center;gap:12px;background:#5865F2;color:#fff;border:none;padding:16px 24px;font-size:1.05rem;border-radius:12px;">
         <i class="fab fa-discord" style="font-size:1.3rem;"></i> Discord ile Giriş Yap
       </button>
 
@@ -48,13 +48,13 @@
   </div>
 </div>
 
-<script src="js/config.js?v=43"></script>
+<script src="js/config.js?v=44"></script>
 <script>
   // Minimal init — no Supabase needed for login page
   const Toast = { show(m,t,d=3200){ const c=document.querySelector('.toast-container')||Object.assign(document.createElement('div'),{className:'toast-container'}); if(!c.parentNode)document.body.appendChild(c); const e=document.createElement('div');e.className='toast '+(t||'info');e.innerHTML='<span>'+m+'</span>';c.appendChild(e);setTimeout(()=>{e.style.opacity='0';setTimeout(()=>e.remove(),300);},d); }, success(m){this.show(m,'success');}, error(m){this.show(m,'error');}, info(m){this.show(m,'info');}, warning(m){this.show(m,'warning');} };
   function showLoading(){}
   function hideLoading(){}
 </script>
-<script src="js/auth.js?v=43"></script>
+<script src="js/auth.js?v=44"></script>
 </body>
 </html>

@@ -7,12 +7,12 @@
 
 // ===== HELPER: yetkili mi? =====
 function isAuthorized() {
-  return Auth.isPolice() || Auth.isAdmin() || Auth.isJustice();
+  return RPAuth.isPolice() || RPAuth.isAdmin() || RPAuth.isJustice();
 }
 
 // ======================== TRAFFIC FINES ========================
 function initTrafficPage() {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   const form = document.getElementById('fine-form');
   const results = document.getElementById('fine-results');
   const statsEl = document.getElementById('fine-stats');
@@ -47,7 +47,7 @@ function initTrafficPage() {
       e.preventDefault();
       const plate = document.getElementById('fine-plate').value.trim().toUpperCase();
       let list = plate ? DB.getFines({plate}) : DB.getFines();
-      if (!Auth.isAdmin()) list = list.filter(f=>f.status!=='Onay Bekliyor');
+      if (!RPAuth.isAdmin()) list = list.filter(f=>f.status!=='Onay Bekliyor');
       updateStats(list); renderFines(list);
     });
   }
@@ -106,7 +106,7 @@ function payFineById(id) {
 
 // ======================== VEHICLE QUERY ========================
 function initVehiclePage() {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   const form = document.getElementById('vehicle-form');
   const results = document.getElementById('vehicle-results');
   if (!results) return;
@@ -159,7 +159,7 @@ function initVehiclePage() {
 
 // ======================== CRIMINAL RECORDS ========================
 function initCriminalPage() {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   const form = document.getElementById('sicil-form');
   const results = document.getElementById('sicil-results');
   if (!results) return;
@@ -202,7 +202,7 @@ const ESignUSB = {
 };
 
 function initESignPage() {
-  const user=Auth.getUser(); const listEl=document.getElementById('esign-list'); const form=document.getElementById('esign-form'); const applySection=document.getElementById('esign-apply-section');
+  const user=RPAuth.getUser(); const listEl=document.getElementById('esign-list'); const form=document.getElementById('esign-form'); const applySection=document.getElementById('esign-apply-section');
   if(!listEl)return;
   const hasCert=user?DB.hasApprovedESign(user.tc):false;
   const pendingApp=user?DB.getESignApplications({tc:user.tc}).find(a=>a.status==='Bekliyor'):null;
@@ -225,12 +225,12 @@ function initESignPage() {
   }
 }
 
-function applyForESign(){const user=Auth.getUser();if(!user)return;if(DB.hasApprovedESign(user.tc)){Toast.info('Zaten sertifikanız var.');return;}if(DB.getESignApplications({tc:user.tc}).find(a=>a.status==='Bekliyor')){Toast.warning('Bekleyen başvurunuz var.');return;}Modal.open(`<div class="modal-header"><h3><i class="fas fa-certificate" style="color:#7c3aed;margin-right:8px;"></i>${APP_CONFIG.eSignProvider.name}</h3><button onclick="Modal.close()" class="btn btn-sm" style="border:1px solid var(--border);"><i class="fas fa-times"></i></button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px;"><div style="font-size:2.5rem;">🔐</div><h3>${APP_CONFIG.eSignProvider.shortName}</h3></div><div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:16px;font-size:0.9rem;"><p><strong>Başvuru Sahibi:</strong> ${user.firstName} ${user.lastName}</p><p><strong>Doğum Tarihi:</strong> ${formatDate(user.birthDate)}</p></div><p style="font-size:0.82rem;color:var(--text-muted);margin-top:14px;">Admin onayından sonra aktif olacaktır.</p></div><div class="modal-footer"><button onclick="Modal.close()" class="btn btn-outline">İptal</button><button onclick="submitESignApplication()" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Gönder</button></div>`);}
-function submitESignApplication(){const user=Auth.getUser();if(!user)return;DB.addESignApplication({tc:user.tc,name:`${user.firstName} ${user.lastName}`,status:'Bekliyor',appliedAt:todayISO(),reviewedAt:null,reviewedBy:null,certificateSerial:null});Modal.close();Toast.success('Başvuru gönderildi!');initESignPage();}
+function applyForESign(){const user=RPAuth.getUser();if(!user)return;if(DB.hasApprovedESign(user.tc)){Toast.info('Zaten sertifikanız var.');return;}if(DB.getESignApplications({tc:user.tc}).find(a=>a.status==='Bekliyor')){Toast.warning('Bekleyen başvurunuz var.');return;}Modal.open(`<div class="modal-header"><h3><i class="fas fa-certificate" style="color:#7c3aed;margin-right:8px;"></i>${APP_CONFIG.eSignProvider.name}</h3><button onclick="Modal.close()" class="btn btn-sm" style="border:1px solid var(--border);"><i class="fas fa-times"></i></button></div><div class="modal-body"><div style="text-align:center;margin-bottom:20px;"><div style="font-size:2.5rem;">🔐</div><h3>${APP_CONFIG.eSignProvider.shortName}</h3></div><div style="background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:16px;font-size:0.9rem;"><p><strong>Başvuru Sahibi:</strong> ${user.firstName} ${user.lastName}</p><p><strong>Doğum Tarihi:</strong> ${formatDate(user.birthDate)}</p></div><p style="font-size:0.82rem;color:var(--text-muted);margin-top:14px;">Admin onayından sonra aktif olacaktır.</p></div><div class="modal-footer"><button onclick="Modal.close()" class="btn btn-outline">İptal</button><button onclick="submitESignApplication()" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Gönder</button></div>`);}
+function submitESignApplication(){const user=RPAuth.getUser();if(!user)return;DB.addESignApplication({tc:user.tc,name:`${user.firstName} ${user.lastName}`,status:'Bekliyor',appliedAt:todayISO(),reviewedAt:null,reviewedBy:null,certificateSerial:null});Modal.close();Toast.success('Başvuru gönderildi!');initESignPage();}
 
 // ===== E-SIGN USB FLOW (with dual-sign + preview) =====
 function startESignFlow(docId) {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user || !DB.hasApprovedESign(user.tc)) { Toast.error('e-İmza sertifikanız yok.'); return; }
   const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
@@ -243,7 +243,7 @@ function startESignFlow(docId) {
 }
 
 function simulateUSBPlug(docId) {
-  const user = Auth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
+  const user = RPAuth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
   const d = document.getElementById('usb-step-detect');
   if (d) { d.innerHTML = `<div style="font-size:3rem;animation:pulse 1s infinite;">🔌</div><h3>Tespit Ediliyor...</h3><div style="margin-top:20px;"><div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:#10b981;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div></div>`; }
   setTimeout(() => { ESignUSB.setUSBActive(); showESignInfoStep(user, cert, doc); }, 2000);
@@ -261,7 +261,7 @@ function showDocPreviewBeforeSign(doc, user, cert) {
 }
 
 function proceedToSecondPartySign(docId) {
-  const user = Auth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
+  const user = RPAuth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId);
   if (!doc) return;
   if (ESignUSB.isUSBActive()) { showESignInfoStep(user, cert, doc); } else {
     Modal.open(`<div class="modal-header" style="background:linear-gradient(135deg,#1a1d23,#2d323b);color:#fff;"><h3><i class="fas fa-usb" style="margin-right:8px;"></i>e-İmza USB</h3><button onclick="Modal.close()" class="btn btn-sm" style="border:1px solid rgba(255,255,255,0.3);color:#fff;"><i class="fas fa-times"></i></button></div><div class="modal-body" style="text-align:center;padding:40px 24px;"><div id="usb-step-detect"><div style="font-size:3rem;margin-bottom:16px;animation:pulse 1.5s infinite;">🔌</div><h3>E-İmza USB'si Tespit Ediliyor...</h3><div style="margin-top:20px;"><div style="width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--primary-blue);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto;"></div></div></div></div>`);
@@ -283,7 +283,7 @@ function buildTemplatePreviewHTML(doc) {
 }
 
 function showESignDocStep(docId) {
-  const user = Auth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
+  const user = RPAuth.getUser(); const cert = DB.getESignCertificate(user.tc); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
   const creator = DB.getUserByTC(doc.tc); const tpl = buildTemplatePreviewHTML(doc);
   let dualHtml = '';
   if (doc.dualSign || doc.secondPartyTc) { const p2 = DB.getUserByTC(doc.secondPartyTc); dualHtml = `<div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:0.82rem;"><div style="padding:10px;background:${doc.signedAt?'#d1fae5':'#fef3c7'};border-radius:6px;"><strong>1. Taraf:</strong> ${creator?creator.firstName+' '+creator.lastName:'—'}<br>${doc.signedAt?'✓ İmzalandı':'⏳ Bekliyor'}</div><div style="padding:10px;background:${doc.secondPartySignedAt?'#d1fae5':'#fef3c7'};border-radius:6px;"><strong>2. Taraf:</strong> ${p2?p2.firstName+' '+p2.lastName:'—'}<br>${doc.secondPartySignedAt?'✓ İmzalandı':'⏳ Bekliyor'}</div></div>`; }
@@ -292,7 +292,7 @@ function showESignDocStep(docId) {
 
 function confirmESign(docId) {
   if (!confirm('e-İmza ile imzalamak istediğinize emin misiniz?')) return;
-  const user = Auth.getUser(); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
+  const user = RPAuth.getUser(); const doc = DB.data.eSignatures.find(d => d.id === docId); if (!doc) return;
   const isSecondParty = doc.secondPartyTc === user.tc && doc.tc !== user.tc;
   Modal.open(`<div class="modal-body" style="text-align:center;padding:50px;"><div style="width:60px;height:60px;border:4px solid var(--border);border-top-color:#059669;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;"></div><h3>İmzalanıyor...</h3></div>`);
   setTimeout(() => {
@@ -316,12 +316,12 @@ function previewDoc(id) {
 }
 
 // ======================== E-APPOINTMENT ========================
-function initAppointmentPage(){const user=Auth.getUser();const listEl=document.getElementById('appt-list');const form=document.getElementById('appt-form');const historyEl=document.getElementById('appt-history');if(!listEl)return;if(!user){listEl.innerHTML=`<div class="empty-state"><div class="icon">🔒</div><h4>Giriş Gerekli</h4><a href="giris.html" class="btn btn-primary btn-sm" style="margin-top:10px;">Giriş Yap</a></div>`;return;}renderLists();if(form){form.addEventListener('submit',(e)=>{e.preventDefault();const inst=document.getElementById('appt-inst').value;const svc=document.getElementById('appt-service').value.trim();const date=document.getElementById('appt-date').value;const time=document.getElementById('appt-time').value;const loc=document.getElementById('appt-loc')?.value||inst;if(!inst||!svc||!date||!time){Toast.warning('Tüm alanları doldurunuz.');return;}DB.addAppointment({tc:user.tc,institution:inst,service:svc,date,time,status:'Aktif',location:loc});Toast.success('Randevu alındı!');form.reset();renderLists();});}function renderLists(){const my=DB.getAppointments({tc:user.tc});const active=my.filter(a=>a.status==='Aktif');const past=my.filter(a=>a.status!=='Aktif');if(active.length===0){listEl.innerHTML=`<div class="empty-state"><div class="icon">📅</div><h4>Aktif Randevu Yok</h4></div>`;}else{listEl.innerHTML=active.map(a=>`<div class="card" style="border-left:4px solid var(--primary-blue);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;"><div><div style="font-weight:700;">${a.service}</div><div style="font-size:0.85rem;color:var(--text-muted);">${a.institution} • ${a.location}</div><div style="font-size:0.9rem;margin-top:6px;">${formatDate(a.date)} ${a.time}</div></div><div style="display:flex;gap:8px;"><span class="status-badge status-guvluk">${a.status}</span><button class="btn btn-red btn-sm" onclick="cancelAppt(${a.id})"><i class="fas fa-times"></i></button></div></div></div>`).join('');}if(historyEl){historyEl.innerHTML=past.length===0?'<p style="color:var(--text-muted);">Geçmiş yok.</p>':`<table class="data-table" style="font-size:0.85rem;"><thead><tr><th>Hizmet</th><th>Kurum</th><th>Tarih</th><th>Durum</th></tr></thead><tbody>${past.map(a=>`<tr><td>${a.service}</td><td>${a.institution}</td><td>${formatDate(a.date)} ${a.time}</td><td><span class="status-badge ${a.status==='Tamamlandı'?'status-odendi':'status-odenmedi'}">${a.status}</span></td></tr>`).join('')}</tbody></table>`;}}}
+function initAppointmentPage(){const user=RPAuth.getUser();const listEl=document.getElementById('appt-list');const form=document.getElementById('appt-form');const historyEl=document.getElementById('appt-history');if(!listEl)return;if(!user){listEl.innerHTML=`<div class="empty-state"><div class="icon">🔒</div><h4>Giriş Gerekli</h4><a href="giris.html" class="btn btn-primary btn-sm" style="margin-top:10px;">Giriş Yap</a></div>`;return;}renderLists();if(form){form.addEventListener('submit',(e)=>{e.preventDefault();const inst=document.getElementById('appt-inst').value;const svc=document.getElementById('appt-service').value.trim();const date=document.getElementById('appt-date').value;const time=document.getElementById('appt-time').value;const loc=document.getElementById('appt-loc')?.value||inst;if(!inst||!svc||!date||!time){Toast.warning('Tüm alanları doldurunuz.');return;}DB.addAppointment({tc:user.tc,institution:inst,service:svc,date,time,status:'Aktif',location:loc});Toast.success('Randevu alındı!');form.reset();renderLists();});}function renderLists(){const my=DB.getAppointments({tc:user.tc});const active=my.filter(a=>a.status==='Aktif');const past=my.filter(a=>a.status!=='Aktif');if(active.length===0){listEl.innerHTML=`<div class="empty-state"><div class="icon">📅</div><h4>Aktif Randevu Yok</h4></div>`;}else{listEl.innerHTML=active.map(a=>`<div class="card" style="border-left:4px solid var(--primary-blue);"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;"><div><div style="font-weight:700;">${a.service}</div><div style="font-size:0.85rem;color:var(--text-muted);">${a.institution} • ${a.location}</div><div style="font-size:0.9rem;margin-top:6px;">${formatDate(a.date)} ${a.time}</div></div><div style="display:flex;gap:8px;"><span class="status-badge status-guvluk">${a.status}</span><button class="btn btn-red btn-sm" onclick="cancelAppt(${a.id})"><i class="fas fa-times"></i></button></div></div></div>`).join('');}if(historyEl){historyEl.innerHTML=past.length===0?'<p style="color:var(--text-muted);">Geçmiş yok.</p>':`<table class="data-table" style="font-size:0.85rem;"><thead><tr><th>Hizmet</th><th>Kurum</th><th>Tarih</th><th>Durum</th></tr></thead><tbody>${past.map(a=>`<tr><td>${a.service}</td><td>${a.institution}</td><td>${formatDate(a.date)} ${a.time}</td><td><span class="status-badge ${a.status==='Tamamlandı'?'status-odendi':'status-odenmedi'}">${a.status}</span></td></tr>`).join('')}</tbody></table>`;}}}
 function cancelAppt(id){if(!confirm('İptal etmek istiyor musunuz?'))return;DB.cancelAppointment(id);Toast.info('İptal edildi.');initAppointmentPage();}
 
 // ======================== PROFILE ========================
 function initProfilePage(){
-  const user=Auth.getUser();
+  const user=RPAuth.getUser();
   if(!user){const c=document.getElementById('profile-content');if(c)c.innerHTML=`<div class="empty-state"><div class="icon">🔒</div><h4>Giriş Gerekli</h4><a href="giris.html" class="btn btn-primary btn-sm" style="margin-top:10px;">Giriş Yap</a></div>`;return;}
   const params=new URLSearchParams(window.location.search);
   let tc = user.tc;
@@ -340,7 +340,7 @@ function initProfilePage(){
   const aEl=document.getElementById('prof-appts');
   if(aEl){const active=DB.getAppointments({tc}).filter(a=>a.status==='Aktif');aEl.innerHTML=active.length?active.map(a=>`<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;"><div><div style="font-weight:600;">${a.service}</div><div style="font-size:0.78rem;color:var(--text-muted);">${a.institution} • ${formatDate(a.date)}</div></div><span class="status-badge status-guvluk">${a.status}</span></div>`).join(''):'<p style="color:var(--text-muted);">Randevu yok.</p>';}
 }
-function initDashboardPage(){const user=Auth.requireAuth();if(!user)return;const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};set('dash-name',`${user.firstName} ${user.lastName}`);set('dash-tc',user.tc);const myFines=DB.getActiveFines({tc:user.tc});const myRecords=DB.getCriminalRecords({tc:user.tc});const myVehicles=DB.getVehicles({ownerTc:user.tc});const myAppts=DB.getAppointments({tc:user.tc}).filter(a=>a.status==='Aktif');set('stat-fines',myFines.filter(f=>f.status==='Ödenmedi').length);set('stat-records',myRecords.length);set('stat-vehicles',myVehicles.length);const sBal=document.getElementById('stat-balance');if(sBal)sBal.textContent=formatTL(myFines.filter(f=>f.status==='Ödenmedi').reduce((a,b)=>a+b.amount,0));set('stat-appts',myAppts.length);const recent=document.getElementById('recent-list');if(recent){const logs=[...myFines,...myRecords].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);if(logs.length===0){recent.innerHTML=`<div class="empty-state"><div class="icon">📭</div><p>İşlem yok.</p></div>`;}else{recent.innerHTML=logs.map(l=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="font-weight:600;font-size:0.9rem;">${l.reason||l.crime}</div><div style="font-size:0.78rem;color:var(--text-muted);">${formatDate(l.date)}</div></div><span class="status-badge ${l.status==='Ödenmedi'?'status-odenmedi':l.status==='Ödendi'?'status-odendi':l.status==='Kapalı'?'status-odendi':'status-acik'}">${l.status}</span></div>`).join('');}}}
+function initDashboardPage(){const user=RPAuth.requireAuth();if(!user)return;const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};set('dash-name',`${user.firstName} ${user.lastName}`);set('dash-tc',user.tc);const myFines=DB.getActiveFines({tc:user.tc});const myRecords=DB.getCriminalRecords({tc:user.tc});const myVehicles=DB.getVehicles({ownerTc:user.tc});const myAppts=DB.getAppointments({tc:user.tc}).filter(a=>a.status==='Aktif');set('stat-fines',myFines.filter(f=>f.status==='Ödenmedi').length);set('stat-records',myRecords.length);set('stat-vehicles',myVehicles.length);const sBal=document.getElementById('stat-balance');if(sBal)sBal.textContent=formatTL(myFines.filter(f=>f.status==='Ödenmedi').reduce((a,b)=>a+b.amount,0));set('stat-appts',myAppts.length);const recent=document.getElementById('recent-list');if(recent){const logs=[...myFines,...myRecords].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);if(logs.length===0){recent.innerHTML=`<div class="empty-state"><div class="icon">📭</div><p>İşlem yok.</p></div>`;}else{recent.innerHTML=logs.map(l=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);"><div><div style="font-weight:600;font-size:0.9rem;">${l.reason||l.crime}</div><div style="font-size:0.78rem;color:var(--text-muted);">${formatDate(l.date)}</div></div><span class="status-badge ${l.status==='Ödenmedi'?'status-odenmedi':l.status==='Ödendi'?'status-odendi':l.status==='Kapalı'?'status-odendi':'status-acik'}">${l.status}</span></div>`).join('');}}}
 
 // ======================== HOME SEARCH ========================
 function handleHomeSearch(e){e.preventDefault();const q=document.getElementById('home-search').value.trim().toUpperCase();if(!q){Toast.warning('Arama terimi giriniz.');return;}if(q.includes('CEZA')||q.includes('TRAF')){window.location.href='trafik.html';}else if(q.includes('RANDEVU')){window.location.href='randevu.html';}else if(q.includes('İMZA')||q.includes('IMZA')){window.location.href='eimza.html';}else if(q.includes('ADALET')||q.includes('DAVA')){window.location.href='eadalet.html';}else if(q.includes('ARAÇ')||q.includes('ARAC')||q.includes('PLAKA')){window.location.href='arac.html';}else if(q.includes('SİCİL')||q.includes('SICIL')){window.location.href='sicil.html';}else{Toast.warning('Sonuç bulunamadı.');}}

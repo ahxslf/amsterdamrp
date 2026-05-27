@@ -4,7 +4,7 @@
  */
 
 function adminName() {
-  const u = Auth.getUser() || {};
+  const u = RPAuth.getUser() || {};
   return `${u.firstName || u.first_name || u.discord_username || 'Admin'} ${u.lastName || u.last_name || ''}`.trim();
 }
 
@@ -14,7 +14,7 @@ function adminError(el, err) {
 }
 
 async function initAdminPage() {
-  const user = Auth.requireAdmin();
+  const user = RPAuth.requireAdmin();
   if (!user) return;
   try {
     await Promise.all([

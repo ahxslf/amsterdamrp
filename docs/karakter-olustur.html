@@ -90,16 +90,16 @@
   </div>
 </div>
 
-<script src="js/config.js?v=43"></script>
-<script src="js/db.js?v=43"></script>
-<script src="js/ui.js?v=43"></script>
-<script src="js/auth.js?v=43"></script>
+<script src="js/config.js?v=44"></script>
+<script src="js/db.js?v=44"></script>
+<script src="js/ui.js?v=44"></script>
+<script src="js/auth.js?v=44"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   initSupabase();
 
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user || !user.discord_id) { window.location.href = 'giris.html'; return; }
 
   // Show Discord info

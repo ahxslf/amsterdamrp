@@ -36,7 +36,7 @@
     return res.json();
   }
 
-  window.Auth = {
+  window.RPAuth = window.Auth = {
     currentUser: null,
 
     login() {
@@ -209,7 +209,7 @@
   window.updateHeaderAuth = function updateHeaderAuth() {
     const el = document.getElementById('header-auth');
     if (!el) return;
-    const user = Auth.getUser();
+    const user = RPAuth.getUser();
     if (user) {
       const name = `${user.firstName || user.first_name || user.discord_username || 'Kullanıcı'} ${user.lastName || user.last_name || ''}`.trim();
       const avatar = user.discord_avatar
@@ -218,8 +218,8 @@
       el.innerHTML = `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">${avatar}
         <span style="font-size:0.9rem;font-weight:600;">${name}</span>
         ${user.status === 'Aktif' ? '<a href="panel.html" class="btn btn-outline btn-sm"><i class="fas fa-th-large"></i> Panel</a>' : ''}
-        ${Auth.isAdmin() ? '<a href="admin.html" class="btn btn-sm" style="background:#7c3aed;color:#fff;border:none;"><i class="fas fa-crown"></i> Admin</a>' : ''}
-        <button onclick="Auth.logout()" class="btn btn-red btn-sm"><i class="fas fa-sign-out-alt"></i></button></div>`;
+        ${RPAuth.isAdmin() ? '<a href="admin.html" class="btn btn-sm" style="background:#7c3aed;color:#fff;border:none;"><i class="fas fa-crown"></i> Admin</a>' : ''}
+        <button onclick="RPAuth.logout()" class="btn btn-red btn-sm"><i class="fas fa-sign-out-alt"></i></button></div>`;
       if (typeof NotifBell !== 'undefined' && user.tc) {
         try { NotifBell.inject(); } catch (e) { console.warn('Bildirim zili yüklenemedi:', e); }
       }

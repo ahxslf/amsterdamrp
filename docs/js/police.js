@@ -4,7 +4,7 @@
  */
 
 const Police = {
-  canAccess() { return Auth.isPolice() || Auth.isAdmin(); },
+  canAccess() { return RPAuth.isPolice() || RPAuth.isAdmin(); },
   createCitation(data) { return DB.addFine(data); },
   createRecord(data) { return DB.addCriminalRecord(data); },
   createReport(data) { return DB.addPoliceReport(data); },
@@ -17,7 +17,7 @@ function initPolicePage() {
     document.body.innerHTML = `<div style="display:grid;place-items:center;min-height:100vh;background:var(--bg-body);"><div style="text-align:center;padding:40px;max-width:420px;"><div style="font-size:4rem;margin-bottom:16px;">🚫</div><h2>Erişim Reddedildi</h2><p style="color:var(--text-muted);">Yetkili kolluk kuvvetleri personeli değilsiniz.</p><a href="index.html" class="btn btn-primary" style="margin-top:20px;">Ana Sayfaya Dön</a></div></div>`;
     return;
   }
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   renderOverview(); renderCitationForm(); renderReports(); renderSearchTools();
 
   function renderOverview() {

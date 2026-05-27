@@ -60,19 +60,19 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=43"></script>
-<script src="js/db.js?v=43"></script>
-<script src="js/ui.js?v=43"></script>
-<script src="js/auth.js?v=43"></script>
-<script src="js/services.js?v=43"></script>
-<script src="js/police.js?v=43"></script>
+<script src="js/config.js?v=44"></script>
+<script src="js/db.js?v=44"></script>
+<script src="js/ui.js?v=44"></script>
+<script src="js/auth.js?v=44"></script>
+<script src="js/services.js?v=44"></script>
+<script src="js/police.js?v=44"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
   initSupabase();
   updateHeaderAuth();
-  const user = Auth.getUser();
-  if (!Auth.isPolice() && !Auth.isAdmin()) {
+  const user = RPAuth.getUser();
+  if (!RPAuth.isPolice() && !RPAuth.isAdmin()) {
     document.getElementById('police-access-check').innerHTML = `
       <div class="card" style="text-align:center;padding:50px 20px;border-left:4px solid #ef4444;">
         <div style="font-size:3.5rem;margin-bottom:16px;">🚫</div>

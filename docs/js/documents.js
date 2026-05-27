@@ -84,7 +84,7 @@ const DOC_TEMPLATES = {
 
 // ===================== ŞABLON SEÇİM EKRANI =====================
 function showTemplateSelector() {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user) { Toast.error('Giriş yapmalısınız.'); return; }
   if (!DB.hasApprovedESign(user.tc)) { Toast.error('Önce e-İmza başvurusu yapmanız gerekiyor.'); return; }
 
@@ -117,7 +117,7 @@ function showTemplateSelector() {
 function showTemplateForm(templateKey) {
   const t = DOC_TEMPLATES[templateKey];
   if (!t) return;
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
 
   const fieldsHtml = t.fields.map(f => {
     let input = '';
@@ -160,7 +160,7 @@ function showTemplateForm(templateKey) {
 // ===================== BELGE OLUŞTUR =====================
 function createDocumentFromTemplate(templateKey) {
   const t = DOC_TEMPLATES[templateKey];
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user || !t) return;
 
   // Collect field values
@@ -298,7 +298,7 @@ DB.signDocument = function(id) {
 
 // ===================== İMZA BEKLEYENLERİM (İkinci taraf) =====================
 function renderPendingSignatures(containerEl) {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user || !containerEl) return;
 
   const pendingForMe = DB.data.eSignatures.filter(d =>
@@ -331,8 +331,8 @@ function renderPendingSignatures(containerEl) {
 
 // ===================== AVUKAT MÜVEKKİL PANELİ =====================
 function renderLawyerClientsPanel(containerEl) {
-  const user = Auth.getUser();
-  if (!user || !containerEl || !Auth.isLawyer()) return;
+  const user = RPAuth.getUser();
+  if (!user || !containerEl || !RPAuth.isLawyer()) return;
 
   const mandates = DB.getClientsByLawyer(user.tc);
   if (mandates.length === 0) {
@@ -363,7 +363,7 @@ function renderLawyerClientsPanel(containerEl) {
 
 // ===================== MÜVEKKİL DOSYALARI GÖRÜNTÜLEME =====================
 function viewClientFiles(clientTc) {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!DB.hasActiveMandateFor(user.tc, clientTc)) {
     Toast.error('Bu müvekkil için yetkiniz bulunmuyor.');
     return;
@@ -408,23 +408,23 @@ function viewClientFiles(clientTc) {
 
 // ===================== DAVA MESAJLAŞMA =====================
 function openCaseMessaging(relatedTc) {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   if (!user) return;
 
   // Find relevant cases
   let cases = [];
-  if (Auth.isLawyer()) {
+  if (RPAuth.isLawyer()) {
     cases = DB.getCourtCases().filter(c =>
       c.defenseAttorney && c.defenseAttorney.includes(user.lastName) ||
       DB.hasActiveMandateFor(user.tc, c.defendantTc)
     );
-  } else if (Auth.isJudge() || Auth.isProsecutor()) {
+  } else if (RPAuth.isJudge() || RPAuth.isProsecutor()) {
     cases = DB.getCourtCases();
   }
 
   // Get available recipients based on role
   const recipients = [];
-  if (Auth.isLawyer()) {
+  if (RPAuth.isLawyer()) {
     // Lawyers can message judges and prosecutors
     DB.getUsers().filter(u => (u.job||'').includes('Yargıç') || (u.job||'').includes('Savcı')).forEach(u => {
       recipients.push({tc:u.tc, name:`${u.firstName} ${u.lastName}`, role:u.job});
@@ -500,7 +500,7 @@ function openCaseMessaging(relatedTc) {
 }
 
 function sendCaseMessage() {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   const caseSelect = document.getElementById('msg-case');
   const recipientTc = document.getElementById('msg-recipient')?.value;
   const subject = document.getElementById('msg-subject')?.value?.trim();
@@ -514,7 +514,7 @@ function sendCaseMessage() {
   const caseId = parseInt(caseSelect.value);
   const caseNo = caseSelect.selectedOptions[0]?.dataset?.caseno || '';
   const recipient = DB.getUserByTC(recipientTc);
-  const senderRole = Auth.isJudge()?'Yargıç':Auth.isProsecutor()?'Savcı':Auth.isLawyer()?'Avukat':'Vatandaş';
+  const senderRole = RPAuth.isJudge()?'Yargıç':RPAuth.isProsecutor()?'Savcı':RPAuth.isLawyer()?'Avukat':'Vatandaş';
   const recipientRole = (recipient?.job||'').includes('Yargıç')?'Yargıç':(recipient?.job||'').includes('Savcı')?'Savcı':(recipient?.job||'').includes('Avukat')?'Avukat':'Vatandaş';
 
   DB.addCaseMessage({

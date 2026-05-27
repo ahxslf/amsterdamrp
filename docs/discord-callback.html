@@ -15,10 +15,10 @@
 </div>
 
 <!-- ?v=2 ekleyerek önbelleği (cache) zorla temizliyoruz -->
-<script src="js/config.js?v=43"></script>
-<script src="js/db.js?v=43"></script>
-<script src="js/ui.js?v=43"></script>
-<script src="js/auth.js?v=43"></script>
+<script src="js/config.js?v=44"></script>
+<script src="js/db.js?v=44"></script>
+<script src="js/ui.js?v=44"></script>
+<script src="js/auth.js?v=44"></script>
 
 <script>
 window.showLoading = (m) => { document.getElementById('cb-text').textContent = m; };
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (typeof initSupabase === 'function') initSupabase();
     const accessToken = new URLSearchParams(window.location.hash.substring(1)).get('access_token');
     if (!accessToken) throw new Error('Token bulunamadı!');
-    await Auth.handleCallback(accessToken);
+    await RPAuth.handleCallback(accessToken);
   } catch (err) {
     document.getElementById('cb-loader').style.display = 'none';
     document.getElementById('cb-error').style.display = 'block';

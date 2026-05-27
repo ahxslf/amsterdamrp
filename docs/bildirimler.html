@@ -42,11 +42,11 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=43"></script>
-<script src="js/db.js?v=43"></script>
-<script src="js/ui.js?v=43"></script>
-<script src="js/auth.js?v=43"></script>
-<script src="js/services.js?v=43"></script>
+<script src="js/config.js?v=44"></script>
+<script src="js/db.js?v=44"></script>
+<script src="js/ui.js?v=44"></script>
+<script src="js/auth.js?v=44"></script>
+<script src="js/services.js?v=44"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function renderNotifPage() {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   const el = document.getElementById('notif-full-list');
   if (!user || !el) { if(el) el.innerHTML='<div class="card" style="text-align:center;padding:40px;"><p>Bildirimleri görmek için giriş yapmalısınız.</p><a href="giris.html" class="btn btn-primary" style="margin-top:12px;">Giriş Yap</a></div>'; return; }
 
@@ -86,7 +86,7 @@ function renderNotifPage() {
 }
 
 function markNotifAndRefresh(id) { DB.markNotifRead(id); renderNotifPage(); NotifBell.inject(); }
-function markAllNotifs() { const u=Auth.getUser(); if(u){DB.markAllRead(u.tc);renderNotifPage();NotifBell.inject();Toast.success('Tüm bildirimler okundu.');} }
+function markAllNotifs() { const u=RPAuth.getUser(); if(u){DB.markAllRead(u.tc);renderNotifPage();NotifBell.inject();Toast.success('Tüm bildirimler okundu.');} }
 </script>
 </body>
 </html>

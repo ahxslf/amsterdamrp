@@ -119,7 +119,7 @@ function generateReceiptHTML(payment) {
 
 // ===== SIDEBAR =====
 function injectSidebar(activePage) {
-  const user = Auth.getUser();
+  const user = RPAuth.getUser();
   const container = document.querySelector('.dash-grid') || document.querySelector('.sidebar-container');
   if (!container || !user) return;
   const sidebar = container.querySelector('aside.sidebar');
@@ -133,7 +133,7 @@ function injectSidebar(activePage) {
   });
   // Police link
   const nav = sidebar.querySelector('.sidebar-nav');
-  if (nav && Auth.isPolice()) {
+  if (nav && RPAuth.isPolice()) {
     if (!nav.querySelector('a[href="polis.html"]')) {
       const li = document.createElement('li');
       li.innerHTML = `<a href="polis.html"><i class="fas fa-shield-alt"></i> Polis Paneli</a>`;
@@ -141,7 +141,7 @@ function injectSidebar(activePage) {
     }
   }
   // Justice link
-  if (nav && (Auth.isJudge() || Auth.isProsecutor() || Auth.isLawyer())) {
+  if (nav && (RPAuth.isJudge() || RPAuth.isProsecutor() || RPAuth.isLawyer())) {
     if (!nav.querySelector('a[href="eadalet.html"]')) {
       const li = document.createElement('li');
       li.innerHTML = `<a href="eadalet.html"><i class="fas fa-balance-scale"></i> e-Adalet</a>`;
@@ -167,7 +167,7 @@ function sortTable(rows, key, dir='asc') {
 // ===== NOTIFICATIONS BELL =====
 const NotifBell = {
   inject() {
-    const user = Auth.getUser();
+    const user = RPAuth.getUser();
     if (!user) return;
     const count = DB.getUnreadCount(user.tc);
     const headerAuth = document.getElementById('header-auth');
@@ -199,7 +199,7 @@ const NotifBell = {
   },
 
   renderList() {
-    const user = Auth.getUser();
+    const user = RPAuth.getUser();
     if (!user) return;
     const list = document.getElementById('notif-dropdown-list');
     if (!list) return;
@@ -226,7 +226,7 @@ const NotifBell = {
   },
 
   markAllRead() {
-    const user = Auth.getUser();
+    const user = RPAuth.getUser();
     if (user) { DB.markAllRead(user.tc); this.inject(); Toast.success('Tüm bildirimler okundu.'); }
   },
 

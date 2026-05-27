@@ -92,13 +92,13 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="js/config.js?v=43"></script>
-<script src="js/db.js?v=43"></script>
-<script src="js/ui.js?v=43"></script>
-<script src="js/auth.js?v=43"></script>
-<script src="js/services.js?v=43"></script>
-<script src="js/documents.js?v=43"></script>
-<script src="js/justice.js?v=43"></script>
+<script src="js/config.js?v=44"></script>
+<script src="js/db.js?v=44"></script>
+<script src="js/ui.js?v=44"></script>
+<script src="js/auth.js?v=44"></script>
+<script src="js/services.js?v=44"></script>
+<script src="js/documents.js?v=44"></script>
+<script src="js/justice.js?v=44"></script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   Theme.init();
@@ -107,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initJusticePage();
   // Messaging
   const msgSection = document.getElementById('justice-messages');
-  if (msgSection && Auth.getUser() && (Auth.isLawyer() || Auth.isJudge() || Auth.isProsecutor())) {
-    const unread = DB.getUnreadMessages(Auth.getUser().tc);
+  if (msgSection && RPAuth.getUser() && (RPAuth.isLawyer() || RPAuth.isJudge() || RPAuth.isProsecutor())) {
+    const unread = DB.getUnreadMessages(RPAuth.getUser().tc);
     msgSection.innerHTML = '<div class="card" style="border-left:4px solid #1565c0;"><div class="card-header"><i class="fas fa-envelope" style="color:#1565c0;"></i><h3>Dava Mesajları ' + (unread.length>0?'<span class="status-badge status-acik">'+unread.length+' yeni</span>':'') + '</h3></div><p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;">Dava tarafları ile güvenli mesajlaşma.</p><button onclick="openCaseMessaging()" class="btn btn-primary btn-sm"><i class="fas fa-comments"></i> Mesajları Aç</button></div>';
   }
 });
